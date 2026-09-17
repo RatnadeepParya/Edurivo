@@ -1,0 +1,40 @@
+# Global Default Code Owner
+# All files in the repository default to @RatnadeepParya
+* @RatnadeepParya
+
+# Security, Policies & GitHub Governance
+/.github/ @RatnadeepParya
+/SECURITY.md @RatnadeepParya
+/CONTRIBUTING.md @RatnadeepParya
+/CODE_OF_CONDUCT.md @RatnadeepParya
+/LICENSE @RatnadeepParya
+
+# Security Rules & Firebase Infrastructure
+/firestore.rules @RatnadeepParya
+/firestore.indexes.json @RatnadeepParya
+/database.rules.json @RatnadeepParya
+/storage.rules @RatnadeepParya
+/firebase.json @RatnadeepParya
+/.firebaserc @RatnadeepParya
+
+# Core Server, Config & Architecture
+/app.js @RatnadeepParya
+/server.js @RatnadeepParya
+/package.json @RatnadeepParya
+/package-lock.json @RatnadeepParya
+/app/config/ @RatnadeepParya
+/app/middleware/ @RatnadeepParya
+/app/routes/ @RatnadeepParya
+
+# Financial Ledger, Cashier Station & Payments
+/app/services/finance.service.js @RatnadeepParya
+/app/services/cashier.service.js @RatnadeepParya
+/app/services/receipt.service.js @RatnadeepParya
+/app/services/payment/ @RatnadeepParya
+/app/repositories/finance.repo.js @RatnadeepParya
+
+# Cloud Functions & Backend Serverless
+/functions/ @RatnadeepParya
+
+# Test Automation & Verification
+/tests/ @RatnadeepParya
