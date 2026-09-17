@@ -1,0 +1,56 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Payroll & Compensation</h1>
+    <div class="page-subtitle">Monthly salary disbursements, allowances and statutory deductions</div>
+  </div>
+</div>
+
+<div class="card mb-6">
+  <form method="GET" action="/admin/payroll" class="form-row items-center">
+    <div class="form-col">
+      <label class="form-label" for="payrollMonth">Select Payroll Month</label>
+      <input type="month" id="payrollMonth" name="monthYear" class="form-control" value="<%= monthYear %>" onchange="this.form.submit()">
+    </div>
+    <div style="align-self: flex-end;">
+      <button type="submit" class="btn btn-secondary">Load Payroll</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">Staff Salary Schedule — <%= monthYear %></h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Faculty Member</th>
+          <th>Department</th>
+          <th>Basic Salary</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (teachers && teachers.length > 0) { %>
+          <% teachers.forEach(t => { %>
+            <tr>
+              <td><strong><%= t.employeeId %></strong></td>
+              <td><strong><%= t.name %></strong></td>
+              <td><%= t.department || 'Academic' %></td>
+              <td><strong>$<%= Number(t.salary || 4500).toFixed(2) %></strong></td>
+              <td><span class="badge badge-success">DISBURSED</span></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 32px;">No salary records found for this period.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

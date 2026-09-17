@@ -1,0 +1,59 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Examination Results & Grades</h1>
+    <div class="page-subtitle">Official grade sheets and subject-wise score breakdowns</div>
+  </div>
+</div>
+
+<div class="card">
+  <% if (results && results.length > 0) { %>
+    <% results.forEach(res => { %>
+      <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main);"><%= res.examId %></h3>
+            <div style="font-size: 12px; color: var(--text-muted);">Published on <%= res.publishedAt ? res.publishedAt.split('T')[0] : 'Official Record' %></div>
+          </div>
+          <div>
+            <span class="badge <%= res.status === 'PASS' ? 'badge-success' : 'badge-danger' %>" style="font-size: 14px; padding: 4px 12px;">
+              <%= res.status %> — Grade <%= res.overallGrade %> (<%= res.percentage %>%)
+            </span>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th style="text-align: center;">Max Marks</th>
+                <th style="text-align: center;">Passing Marks</th>
+                <th style="text-align: center;">Marks Obtained</th>
+                <th style="text-align: center;">Subject Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% (res.subjects || []).forEach(sub => { %>
+                <tr>
+                  <td><strong><%= sub.subjectName %></strong></td>
+                  <td style="text-align: center;"><%= sub.maxMarks %></td>
+                  <td style="text-align: center;"><%= sub.passMarks %></td>
+                  <td style="text-align: center;"><strong><%= sub.obtainedMarks %></strong></td>
+                  <td style="text-align: center;"><span class="badge badge-info"><%= sub.grade %></span></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div style="text-align: center; color: var(--text-muted); padding: 40px;">
+      No examination results have been published for your profile yet.
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

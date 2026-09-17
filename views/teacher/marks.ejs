@@ -1,0 +1,84 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Marks & Grades Entry</h1>
+    <div class="page-subtitle">Submit examination scores and subject assessments</div>
+  </div>
+</div>
+
+<div class="card mb-6">
+  <div class="card-header">
+    <h2 class="card-title">Select Assessment Parameters</h2>
+  </div>
+  <form id="marksEntryForm" class="form-row">
+    <div class="form-col">
+      <label class="form-label" for="mExam">Exam *</label>
+      <select id="mExam" name="examId" class="form-control" required>
+        <% exams.forEach(ex => { %>
+          <option value="<%= ex.id %>"><%= ex.name %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="form-col">
+      <label class="form-label" for="mClass">Class *</label>
+      <select id="mClass" name="classId" class="form-control" required>
+        <% classes.forEach(cls => { %>
+          <option value="<%= cls.id %>"><%= cls.name %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="form-col">
+      <label class="form-label" for="mSubject">Subject *</label>
+      <select id="mSubject" name="subjectId" class="form-control" required>
+        <% subjects.forEach(sub => { %>
+          <option value="<%= sub.id %>"><%= sub.name %> (<%= sub.code %>)</option>
+        <% }) %>
+      </select>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">Score Entry Sheet</h2>
+    <div style="font-size: 13px; color: var(--text-muted);">Max Marks: <strong>100</strong> | Pass Marks: <strong>40</strong></div>
+  </div>
+
+  <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">
+    Enter student scores out of 100. Grades (A+, A, B, etc.) and pass/fail indicators will be computed automatically upon server submission.
+  </p>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Roll No</th>
+          <th>Marks (Max 100)</th>
+          <th>Teacher Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Liam Vance</strong></td>
+          <td>101</td>
+          <td><input type="number" class="form-control" style="width: 100px;" value="88" min="0" max="100"></td>
+          <td><input type="text" class="form-control" placeholder="Good effort"></td>
+        </tr>
+        <tr>
+          <td><strong>Sophia Patel</strong></td>
+          <td>102</td>
+          <td><input type="number" class="form-control" style="width: 100px;" value="94" min="0" max="100"></td>
+          <td><input type="text" class="form-control" placeholder="Outstanding performance"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+    <button type="button" class="btn btn-primary btn-lg" onclick="showToast('Marks submitted successfully!', 'success')">Save Examination Marks</button>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

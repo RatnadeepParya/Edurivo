@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Community Discussion & Support
+    url: https://github.com/RatnadeepParya/Edurivo/discussions
+    about: Ask questions, share ideas, and discuss roadmap items.
+  - name: 📖 System Architecture & Developer Docs
+    url: https://github.com/RatnadeepParya/Edurivo/tree/master/docs
+    about: Read full documentation for installation, RBAC, Firebase, and APIs.

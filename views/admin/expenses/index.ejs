@@ -1,0 +1,121 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Expenses & Procurement</h1>
+    <div class="page-subtitle">Track operational expenditures, vendor disbursements, and budgets</div>
+  </div>
+  <button type="button" class="btn btn-primary" data-modal-target="addExpenseModal">+ Record Expense</button>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon danger">💸</div>
+    <div>
+      <div class="stat-value">$<%= (summary.totalExpense || 0).toLocaleString() %></div>
+      <div class="stat-label">Total Recorded Expenses</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon info">🧾</div>
+    <div>
+      <div class="stat-value"><%= summary.count || 0 %></div>
+      <div class="stat-label">Disbursement Vouchers</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Vendor</th>
+          <th>Description</th>
+          <th>Payment Mode</th>
+          <th style="text-align: right;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (expenses && expenses.length > 0) { %>
+          <% expenses.forEach(exp => { %>
+            <tr>
+              <td><%= exp.date %></td>
+              <td><span class="badge badge-neutral"><%= exp.category %></span></td>
+              <td><strong><%= exp.vendor %></strong></td>
+              <td><%= exp.description %></td>
+              <td><%= exp.paymentMethod %></td>
+              <td style="text-align: right;"><strong>$<%= Number(exp.amount).toFixed(2) %></strong></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 32px;">No expenses recorded.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Expense Modal -->
+<div id="addExpenseModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-size: 16px; font-weight: 700;">Record Operational Expense</h3>
+      <button type="button" data-modal-close style="border:none;background:none;font-size:20px;cursor:pointer;">&times;</button>
+    </div>
+    <form action="/admin/expenses" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label" for="expCat">Category *</label>
+            <select id="expCat" name="category" class="form-control" required>
+              <option value="Utilities">Utilities (Power, Water, Net)</option>
+              <option value="Maintenance">Campus Maintenance</option>
+              <option value="Stationery">Office Stationery</option>
+              <option value="Laboratory">Lab Chemicals & Gear</option>
+              <option value="Sports">Sports & Events</option>
+              <option value="Transportation">Bus Fuel & Transport</option>
+            </select>
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="expAmt">Amount ($) *</label>
+            <input type="number" id="expAmt" name="amount" class="form-control" required step="0.01" placeholder="450.00">
+          </div>
+        </div>
+        <div class="form-row mt-4">
+          <div class="form-col">
+            <label class="form-label" for="expVendor">Vendor / Payee *</label>
+            <input type="text" id="expVendor" name="vendor" class="form-control" required placeholder="e.g. Apex Office Supplies">
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="expMethod">Payment Method *</label>
+            <select id="expMethod" name="paymentMethod" class="form-control" required>
+              <option value="BANK_TRANSFER">Bank Transfer</option>
+              <option value="CHEQUE">Cheque</option>
+              <option value="CARD">Corporate Card</option>
+              <option value="CASH">Cash Voucher</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group mt-4">
+          <label class="form-label" for="expDate">Expense Date *</label>
+          <input type="date" id="expDate" name="date" class="form-control" required value="<%= new Date().toISOString().split('T')[0] %>">
+        </div>
+        <div class="form-group mt-4">
+          <label class="form-label" for="expDesc">Description *</label>
+          <textarea id="expDesc" name="description" class="form-control" rows="2" required placeholder="Details of purchased items or service..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Expense</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

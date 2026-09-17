@@ -1,0 +1,198 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Transport & Fleet Management</h1>
+    <div class="page-subtitle">Route planning, vehicle registry, driver assignments, and student transport rosters</div>
+  </div>
+  <div>
+    <button class="btn btn-primary" onclick="openModal('routeModal')">+ Add Transport Route</button>
+  </div>
+</div>
+
+<% if (typeof query !== 'undefined' && query && query.success) { %>
+  <div class="alert alert-success">Operation completed successfully.</div>
+<% } %>
+
+<!-- Fleet Stats -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon primary">🚌</div>
+    <div>
+      <div class="stat-value"><%= routes.length %></div>
+      <div class="stat-label">Active Bus Routes</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon success">💺</div>
+    <div>
+      <div class="stat-value"><%= routes.reduce((acc, r) => acc + (Number(r.vehicleCapacity) || 0), 0) %></div>
+      <div class="stat-label">Total Fleet Passenger Capacity</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon info">🎒</div>
+    <div>
+      <div class="stat-value"><%= routes.reduce((acc, r) => acc + (Number(r.assignedStudentsCount) || 0), 0) %></div>
+      <div class="stat-label">Students Boarding Daily</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon warning">📡</div>
+    <div>
+      <div class="stat-value">Live Ready</div>
+      <div class="stat-label">GPS RTDB Telemetry Ready</div>
+    </div>
+  </div>
+</div>
+
+<!-- Routes Table -->
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">School Transit Routes & Vehicles</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Route Name</th>
+          <th>Vehicle #</th>
+          <th>Driver & Contact</th>
+          <th>Attendant</th>
+          <th>Timings</th>
+          <th>Stops & Waypoints</th>
+          <th>Capacity / Enrolled</th>
+          <th>Monthly Fee</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (routes && routes.length > 0) { %>
+          <% routes.forEach(r => { %>
+            <tr>
+              <td>
+                <strong><%= r.routeName %></strong>
+                <div style="font-size: 11px; color: var(--text-muted);">ID: <%= r.id %></div>
+              </td>
+              <td>
+                <span class="badge badge-info"><%= r.vehicleNumber || 'Unassigned' %></span>
+              </td>
+              <td>
+                <strong><%= r.driverName || 'N/A' %></strong>
+                <% if (r.driverPhone) { %>
+                  <div style="font-size: 11px; color: var(--text-muted);"><%= r.driverPhone %></div>
+                <% } %>
+              </td>
+              <td><%= r.attendantName || 'None' %></td>
+              <td>
+                <div style="font-size: 12px;"><strong>AM:</strong> <%= r.pickupTime || '07:30' %></div>
+                <div style="font-size: 12px;"><strong>PM:</strong> <%= r.dropoffTime || '15:30' %></div>
+              </td>
+              <td>
+                <% if (r.stops && r.stops.length > 0) { %>
+                  <div style="font-size: 12px; max-width: 220px; line-height: 1.4;">
+                    <%= Array.isArray(r.stops) ? r.stops.join(' ➔ ') : r.stops %>
+                  </div>
+                <% } else { %>
+                  <span class="text-muted">Standard Campus Loop</span>
+                <% } %>
+              </td>
+              <td>
+                <strong><%= r.assignedStudentsCount || 0 %></strong> / <%= r.vehicleCapacity || 40 %>
+              </td>
+              <td>
+                <strong>$<%= (Number(r.monthlyFee) || 0).toFixed(2) %></strong>/mo
+              </td>
+              <td>
+                <span class="badge badge-success"><%= r.status || 'ACTIVE' %></span>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 32px; color: var(--text-muted);">
+              No transport routes found. Register your first school bus route above.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: New Route -->
+<div id="routeModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Create Transport Route & Vehicle</h3>
+      <button class="modal-close" onclick="closeModal('routeModal')">&times;</button>
+    </div>
+    <form method="POST" action="/admin/transport/routes">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label" for="routeName">Route Name *</label>
+            <input type="text" id="routeName" name="routeName" class="form-control" placeholder="e.g. Route 4 - Downtown Express" required>
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="vehicleNumber">Vehicle Registration # *</label>
+            <input type="text" id="vehicleNumber" name="vehicleNumber" class="form-control" placeholder="e.g. SCH-BUS-104" required>
+          </div>
+        </div>
+
+        <div class="form-row mt-4">
+          <div class="form-col">
+            <label class="form-label" for="driverName">Driver Full Name *</label>
+            <input type="text" id="driverName" name="driverName" class="form-control" placeholder="e.g. Samuel Green" required>
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="driverPhone">Driver Phone / Emergency *</label>
+            <input type="tel" id="driverPhone" name="driverPhone" class="form-control" placeholder="e.g. +1 555-019-2834" required>
+          </div>
+        </div>
+
+        <div class="form-row mt-4">
+          <div class="form-col">
+            <label class="form-label" for="attendantName">Bus Attendant / Chaperone</label>
+            <input type="text" id="attendantName" name="attendantName" class="form-control" placeholder="e.g. Sarah Connor">
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="vehicleCapacity">Seating Capacity *</label>
+            <input type="number" id="vehicleCapacity" name="vehicleCapacity" class="form-control" value="40" min="1" max="100" required>
+          </div>
+        </div>
+
+        <div class="form-row mt-4">
+          <div class="form-col">
+            <label class="form-label" for="pickupTime">Morning Pickup Starts</label>
+            <input type="time" id="pickupTime" name="pickupTime" class="form-control" value="07:15">
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="dropoffTime">Evening Dropoff Starts</label>
+            <input type="time" id="dropoffTime" name="dropoffTime" class="form-control" value="15:30">
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="monthlyFee">Monthly Fare ($) *</label>
+            <input type="number" id="monthlyFee" name="monthlyFee" class="form-control" step="0.01" value="75.00" required>
+          </div>
+        </div>
+
+        <div class="form-group mt-4">
+          <label class="form-label" for="stopsStr">Route Stops (Comma separated) *</label>
+          <input type="text" id="stopsStr" name="stopsStr" class="form-control" placeholder="e.g. North Point, Maple St., City Center, Campus Gate" required>
+          <small style="color: var(--text-muted); font-size: 11px;">List primary waypoints and pick-up shelters in chronological sequence.</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('routeModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Route</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

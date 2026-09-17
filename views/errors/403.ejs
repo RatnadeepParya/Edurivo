@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>403 - Access Denied | Edurivo</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body style="display:flex; align-items:center; justify-content:center; min-height:100vh; background:#f8fafc;">
+  <div class="card" style="max-width:480px; text-align:center; padding:40px;">
+    <div style="font-size:48px; margin-bottom:16px;">🚫</div>
+    <h2 style="font-size:24px; font-weight:700; margin-bottom:12px; color:var(--danger);">403 Access Denied</h2>
+    <p style="color:var(--text-muted); margin-bottom:24px;">
+      <%= typeof message !== 'undefined' ? message : 'You do not have sufficient permissions to access this page.' %>
+    </p>
+    <div style="display:flex; gap:12px; justify-content:center;">
+      <a href="/" class="btn btn-primary">Return to Dashboard</a>
+      <a href="/auth/logout" class="btn btn-secondary">Switch Account</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">My Assignments & Homework</h1>
+    <div class="page-subtitle">Track coursework, project deadlines, and submit completed tasks</div>
+  </div>
+</div>
+
+<% if (typeof query !== 'undefined' && query && query.success) { %>
+  <div class="alert alert-success">Your assignment was submitted successfully!</div>
+<% } %>
+
+<!-- Assignments Grid / Cards -->
+<div class="card mb-6">
+  <div class="card-header">
+    <h2 class="card-title">Assigned Tasks for <%= student ? (student.className || 'Class') + ' - ' + (student.sectionName || 'A') : 'My Class' %></h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Assignment Title</th>
+          <th>Due Date</th>
+          <th>Instructions</th>
+          <th>Status</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (homeworkList && homeworkList.length > 0) { %>
+          <% homeworkList.forEach(hw => { %>
+            <% const isSubmitted = submittedIds.has(hw.id); %>
+            <tr>
+              <td>
+                <span class="badge badge-info"><%= hw.subjectName || 'General' %></span>
+              </td>
+              <td>
+                <strong><%= hw.title %></strong>
+                <div style="font-size: 11px; color: var(--text-muted);">Assigned by <%= hw.assignedBy || 'Faculty' %></div>
+              </td>
+              <td>
+                <strong><%= hw.dueDate || 'Open' %></strong>
+              </td>
+              <td>
+                <div style="font-size: 12px; max-width: 250px; line-height: 1.4;">
+                  <%= hw.instructions || 'No specific instructions provided.' %>
+                </div>
+              </td>
+              <td>
+                <% if (isSubmitted) { %>
+                  <span class="badge badge-success">✓ SUBMITTED</span>
+                <% } else { %>
+                  <span class="badge badge-warning">PENDING</span>
+                <% } %>
+              </td>
+              <td style="text-align: right;">
+                <% if (isSubmitted) { %>
+                  <button class="btn btn-secondary btn-sm" disabled>Submitted</button>
+                <% } else { %>
+                  <button class="btn btn-primary btn-sm" onclick="openSubmissionModal('<%= hw.id %>', '<%= hw.title.replace(/'/g, "\\'") %>')">Submit Solution</button>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 32px; color: var(--text-muted);">
+              🎉 All caught up! No active homework assignments for your class right now.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Submit Homework -->
+<div id="submissionModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="submissionTitle">Submit Assignment</h3>
+      <button class="modal-close" onclick="closeModal('submissionModal')">&times;</button>
+    </div>
+    <form id="submissionForm" method="POST" action="">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="notes">Answer Notes / Explanation *</label>
+          <textarea id="notes" name="notes" class="form-control" rows="4" required placeholder="Type your answer, summary, or response notes here..."></textarea>
+        </div>
+
+        <div class="form-group mt-4">
+          <label class="form-label" for="attachmentUrl">Document / Drive / Cloud Storage Link</label>
+          <input type="url" id="attachmentUrl" name="attachmentUrl" class="form-control" placeholder="https://storage.googleapis.com/... or Google Drive link">
+          <small style="color: var(--text-muted); font-size: 11px;">Optional link to your PDF, slide deck, or document submission.</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('submissionModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Turn In Assignment</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openSubmissionModal(hwId, title) {
+    document.getElementById('submissionTitle').innerText = 'Submit: ' + title;
+    document.getElementById('submissionForm').action = '/student/homework/' + hwId + '/submit';
+    openModal('submissionModal');
+  }
+</script>
+
+<%- include('../partials/footer') %>

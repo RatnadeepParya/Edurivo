@@ -1,0 +1,173 @@
+/**
+ * Edurivo Fine-Grained Permissions
+ */
+const { ROLES } = require('./roles');
+
+const PERMISSIONS = {
+  // Students
+  STUDENT_VIEW: 'student.view',
+  STUDENT_CREATE: 'student.create',
+  STUDENT_UPDATE: 'student.update',
+  STUDENT_DELETE: 'student.delete',
+  STUDENT_EXPORT: 'student.export',
+  STUDENT_IMPORT: 'student.import',
+
+  // Teachers
+  TEACHER_VIEW: 'teacher.view',
+  TEACHER_CREATE: 'teacher.create',
+  TEACHER_UPDATE: 'teacher.update',
+  TEACHER_DELETE: 'teacher.delete',
+
+  // Academics
+  CLASS_MANAGE: 'class.manage',
+  SUBJECT_MANAGE: 'subject.manage',
+  SESSION_MANAGE: 'session.manage',
+  TIMETABLE_MANAGE: 'timetable.manage',
+  TIMETABLE_VIEW: 'timetable.view',
+
+  // Attendance
+  ATTENDANCE_VIEW: 'attendance.view',
+  ATTENDANCE_MARK: 'attendance.mark',
+  ATTENDANCE_UPDATE: 'attendance.update',
+
+  // Examination & Marks
+  EXAM_MANAGE: 'exam.manage',
+  EXAM_VIEW: 'exam.view',
+  MARKS_ENTER: 'marks.enter',
+  RESULT_PUBLISH: 'result.publish',
+  RESULT_VIEW: 'result.view',
+
+  // Homework
+  HOMEWORK_CREATE: 'homework.create',
+  HOMEWORK_VIEW: 'homework.view',
+  HOMEWORK_SUBMIT: 'homework.submit',
+
+  // Finance & Cashier
+  FEE_STRUCTURE_MANAGE: 'fee.structure.manage',
+  FEE_VIEW: 'fee.view',
+  FEE_COLLECT: 'fee.collect',
+  FEE_REFUND: 'fee.refund',
+  CASHIER_DRAWER_MANAGE: 'cashier.drawer.manage',
+  RECEIPT_VIEW: 'receipt.view',
+  RECEIPT_REPRINT: 'receipt.reprint',
+  EXPENSE_MANAGE: 'expense.manage',
+  EXPENSE_APPROVE: 'expense.approve',
+
+  // HR & Payroll
+  LEAVE_APPLY: 'leave.apply',
+  LEAVE_APPROVE: 'leave.approve',
+  PAYROLL_PROCESS: 'payroll.process',
+  PAYROLL_VIEW: 'payroll.view',
+
+  // Operations
+  LIBRARY_MANAGE: 'library.manage',
+  LIBRARY_ISSUE: 'library.issue',
+  INVENTORY_MANAGE: 'inventory.manage',
+  TRANSPORT_MANAGE: 'transport.manage',
+
+  // Communication
+  NOTICE_PUBLISH: 'notice.publish',
+  NOTICE_VIEW: 'notice.view',
+
+  // System & Governance
+  REPORTS_VIEW: 'reports.view',
+  SETTINGS_VIEW: 'settings.view',
+  SETTINGS_MANAGE: 'settings.manage',
+  AUDIT_VIEW: 'audit.view',
+  USER_MANAGE: 'user.manage'
+};
+
+/**
+ * Role to default permissions matrix
+ */
+const ROLE_PERMISSIONS = {
+  [ROLES.SUPER_ADMIN]: Object.values(PERMISSIONS),
+  
+  [ROLES.ADMIN]: Object.values(PERMISSIONS),
+
+  [ROLES.TEACHER]: [
+    PERMISSIONS.STUDENT_VIEW,
+    PERMISSIONS.ATTENDANCE_VIEW,
+    PERMISSIONS.ATTENDANCE_MARK,
+    PERMISSIONS.ATTENDANCE_UPDATE,
+    PERMISSIONS.EXAM_VIEW,
+    PERMISSIONS.MARKS_ENTER,
+    PERMISSIONS.RESULT_VIEW,
+    PERMISSIONS.HOMEWORK_CREATE,
+    PERMISSIONS.HOMEWORK_VIEW,
+    PERMISSIONS.TIMETABLE_VIEW,
+    PERMISSIONS.LEAVE_APPLY,
+    PERMISSIONS.NOTICE_VIEW
+  ],
+
+  [ROLES.STUDENT]: [
+    PERMISSIONS.ATTENDANCE_VIEW,
+    PERMISSIONS.TIMETABLE_VIEW,
+    PERMISSIONS.HOMEWORK_VIEW,
+    PERMISSIONS.HOMEWORK_SUBMIT,
+    PERMISSIONS.EXAM_VIEW,
+    PERMISSIONS.RESULT_VIEW,
+    PERMISSIONS.FEE_VIEW,
+    PERMISSIONS.RECEIPT_VIEW,
+    PERMISSIONS.NOTICE_VIEW
+  ],
+
+  [ROLES.CASHIER]: [
+    PERMISSIONS.STUDENT_VIEW,
+    PERMISSIONS.FEE_VIEW,
+    PERMISSIONS.FEE_COLLECT,
+    PERMISSIONS.FEE_REFUND,
+    PERMISSIONS.CASHIER_DRAWER_MANAGE,
+    PERMISSIONS.RECEIPT_VIEW,
+    PERMISSIONS.RECEIPT_REPRINT,
+    PERMISSIONS.REPORTS_VIEW,
+    PERMISSIONS.NOTICE_VIEW
+  ],
+
+  [ROLES.PARENT]: [
+    PERMISSIONS.STUDENT_VIEW,
+    PERMISSIONS.ATTENDANCE_VIEW,
+    PERMISSIONS.RESULT_VIEW,
+    PERMISSIONS.FEE_VIEW,
+    PERMISSIONS.RECEIPT_VIEW,
+    PERMISSIONS.NOTICE_VIEW
+  ],
+
+  [ROLES.ACCOUNTANT]: [
+    PERMISSIONS.STUDENT_VIEW,
+    PERMISSIONS.FEE_STRUCTURE_MANAGE,
+    PERMISSIONS.FEE_VIEW,
+    PERMISSIONS.FEE_COLLECT,
+    PERMISSIONS.FEE_REFUND,
+    PERMISSIONS.RECEIPT_VIEW,
+    PERMISSIONS.EXPENSE_MANAGE,
+    PERMISSIONS.EXPENSE_APPROVE,
+    PERMISSIONS.PAYROLL_VIEW,
+    PERMISSIONS.PAYROLL_PROCESS,
+    PERMISSIONS.REPORTS_VIEW
+  ],
+
+  [ROLES.LIBRARIAN]: [
+    PERMISSIONS.STUDENT_VIEW,
+    PERMISSIONS.TEACHER_VIEW,
+    PERMISSIONS.LIBRARY_MANAGE,
+    PERMISSIONS.LIBRARY_ISSUE,
+    PERMISSIONS.NOTICE_VIEW
+  ],
+
+  [ROLES.TRANSPORT_MANAGER]: [
+    PERMISSIONS.STUDENT_VIEW,
+    PERMISSIONS.TRANSPORT_MANAGE,
+    PERMISSIONS.NOTICE_VIEW
+  ],
+
+  [ROLES.STAFF]: [
+    PERMISSIONS.LEAVE_APPLY,
+    PERMISSIONS.NOTICE_VIEW
+  ]
+};
+
+module.exports = {
+  PERMISSIONS,
+  ROLE_PERMISSIONS
+};

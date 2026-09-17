@@ -1,0 +1,63 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Weekly Routine & Timetable</h1>
+    <div class="page-subtitle">Schedule for <%= student ? `${student.className || 'Class 10'} (${student.sectionName || 'Section A'})` : 'Enrolled Class' %></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Period</th>
+          <th>Time Slot</th>
+          <th>Subject</th>
+          <th>Room</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Monday</strong></td>
+          <td>Period 1</td>
+          <td>09:00 - 09:45 AM</td>
+          <td>Mathematics</td>
+          <td>Room 201</td>
+        </tr>
+        <tr>
+          <td><strong>Monday</strong></td>
+          <td>Period 2</td>
+          <td>09:45 - 10:30 AM</td>
+          <td>Science & Chemistry</td>
+          <td>Lab 1</td>
+        </tr>
+        <tr>
+          <td><strong>Monday</strong></td>
+          <td>Period 3</td>
+          <td>10:45 - 11:30 AM</td>
+          <td>English Literature</td>
+          <td>Room 201</td>
+        </tr>
+        <tr>
+          <td><strong>Tuesday</strong></td>
+          <td>Period 1</td>
+          <td>09:00 - 09:45 AM</td>
+          <td>Social Studies & History</td>
+          <td>Room 201</td>
+        </tr>
+        <tr>
+          <td><strong>Wednesday</strong></td>
+          <td>Period 1</td>
+          <td>09:00 - 09:45 AM</td>
+          <td>Computer Science & Coding</td>
+          <td>Computer Lab</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

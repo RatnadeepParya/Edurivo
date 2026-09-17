@@ -1,0 +1,195 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Classes, Sections & Subjects</h1>
+    <div class="page-subtitle">Configure academic grade levels, divisions and curriculum subjects</div>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <button type="button" class="btn btn-primary" data-modal-target="addClassModal">+ Add Class</button>
+    <button type="button" class="btn btn-secondary" data-modal-target="addSectionModal">+ Add Section</button>
+    <button type="button" class="btn btn-secondary" data-modal-target="addSubjectModal">+ Add Subject</button>
+  </div>
+</div>
+
+<div class="flex gap-6" style="flex-wrap: wrap;">
+  <!-- Classes and Sections List -->
+  <div style="flex: 2; min-width: 380px;">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Enrolled Classes & Associated Sections</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Class Name</th>
+              <th>Numeric Code</th>
+              <th>Sections</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (classes && classes.length > 0) { %>
+              <% classes.forEach(cls => { %>
+                <tr>
+                  <td><strong><%= cls.name %></strong></td>
+                  <td><%= cls.numericCode || '-' %></td>
+                  <td>
+                    <% if (cls.sections && cls.sections.length > 0) { %>
+                      <% cls.sections.forEach(sec => { %>
+                        <span class="badge badge-info" style="margin-right: 4px;"><%= sec.name %></span>
+                      <% }) %>
+                    <% } else { %>
+                      <span style="color: var(--text-muted); font-size: 12px;">No sections yet</span>
+                    <% } %>
+                  </td>
+                  <td style="color: var(--text-muted);"><%= cls.description || '-' %></td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No classes configured.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Academic Sessions Card -->
+  <div style="flex: 1; min-width: 280px;">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Academic Sessions</h2>
+      </div>
+      <ul style="list-style: none;">
+        <% if (sessions && sessions.length > 0) { %>
+          <% sessions.forEach(ses => { %>
+            <li style="padding: 12px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong><%= ses.name %></strong>
+                <div style="font-size: 11px; color: var(--text-muted);"><%= ses.startDate %> to <%= ses.endDate %></div>
+              </div>
+              <span class="badge <%= ses.isActive ? 'badge-success' : 'badge-neutral' %>">
+                <%= ses.isActive ? 'ACTIVE' : 'ARCHIVED' %>
+              </span>
+            </li>
+          <% }) %>
+        <% } else { %>
+          <li style="color: var(--text-muted); font-size: 13px;">No academic sessions found.</li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Add Class Modal -->
+<div id="addClassModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-size: 16px; font-weight: 700;">Add Academic Class</h3>
+      <button type="button" data-modal-close style="border:none;background:none;font-size:20px;cursor:pointer;">&times;</button>
+    </div>
+    <form action="/admin/classes" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="className">Class Name *</label>
+          <input type="text" id="className" name="name" class="form-control" required placeholder="e.g. Class 10">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="numericCode">Numeric Level</label>
+          <input type="number" id="numericCode" name="numericCode" class="form-control" placeholder="10" min="1" max="12">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="classDesc">Description</label>
+          <input type="text" id="classDesc" name="description" class="form-control" placeholder="Secondary Education Level">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Class</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Section Modal -->
+<div id="addSectionModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-size: 16px; font-weight: 700;">Add Class Section</h3>
+      <button type="button" data-modal-close style="border:none;background:none;font-size:20px;cursor:pointer;">&times;</button>
+    </div>
+    <form action="/admin/sections" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="secClass">Assign to Class *</label>
+          <select id="secClass" name="classId" class="form-control" required>
+            <% classes.forEach(cls => { %>
+              <option value="<%= cls.id %>"><%= cls.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="secName">Section Name *</label>
+          <input type="text" id="secName" name="name" class="form-control" required placeholder="e.g. Section B">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="secCapacity">Seat Capacity</label>
+          <input type="number" id="secCapacity" name="capacity" class="form-control" value="40" min="5" max="100">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Section</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Subject Modal -->
+<div id="addSubjectModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-size: 16px; font-weight: 700;">Add Curriculum Subject</h3>
+      <button type="button" data-modal-close style="border:none;background:none;font-size:20px;cursor:pointer;">&times;</button>
+    </div>
+    <form action="/admin/subjects" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="subClass">Class *</label>
+          <select id="subClass" name="classId" class="form-control" required>
+            <% classes.forEach(cls => { %>
+              <option value="<%= cls.id %>"><%= cls.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="subName">Subject Name *</label>
+          <input type="text" id="subName" name="name" class="form-control" required placeholder="e.g. Physics">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="subCode">Subject Code *</label>
+          <input type="text" id="subCode" name="code" class="form-control" required placeholder="e.g. PHY-101">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="subType">Subject Type</label>
+          <select id="subType" name="type" class="form-control">
+            <option value="THEORY">Theory Only</option>
+            <option value="PRACTICAL">Practical Only</option>
+            <option value="BOTH">Theory & Practical</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Subject</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

@@ -1,0 +1,30 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "presence": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "notifications": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null"
+      }
+    },
+    "liveAttendance": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "dashboard": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "cashier": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}

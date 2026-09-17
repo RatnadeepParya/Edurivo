@@ -1,0 +1,72 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Student Portal</h1>
+    <div class="page-subtitle">Welcome back, <%= currentUser.displayName %> | Enrolled Academic Overview</div>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon success">📅</div>
+    <div>
+      <div class="stat-value"><%= stats.attendanceSummary ? stats.attendanceSummary.percentage : 100 %>%</div>
+      <div class="stat-label">Overall Attendance</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon warning">💳</div>
+    <div>
+      <div class="stat-value">$<%= (stats.totalPendingFee || 0).toFixed(2) %></div>
+      <div class="stat-label">Pending Fee Balance</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon primary">🏆</div>
+    <div>
+      <div class="stat-value"><%= (stats.results || []).length %></div>
+      <div class="stat-label">Published Assessments</div>
+    </div>
+  </div>
+</div>
+
+<div class="flex gap-6 mt-6" style="flex-wrap: wrap;">
+  <div style="flex: 2; min-width: 340px;">
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2 class="card-title">Quick Student Services</h2>
+      </div>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="/student/attendance" class="btn btn-secondary">📅 My Attendance Record</a>
+        <a href="/student/results" class="btn btn-secondary">🏆 View Marksheets & Results</a>
+        <a href="/student/fees" class="btn btn-secondary">💳 Fee Status & Receipts</a>
+        <a href="/student/timetable" class="btn btn-secondary">⏰ Class Timetable</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex: 1; min-width: 300px;">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">📢 School Bulletins</h2>
+      </div>
+      <ul style="list-style: none;">
+        <% if (stats.notices && stats.notices.length > 0) { %>
+          <% stats.notices.forEach(n => { %>
+            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+              <strong><%= n.title %></strong>
+              <div style="font-size: 11px; color: var(--text-muted);"><%= n.content %></div>
+            </li>
+          <% }) %>
+        <% } else { %>
+          <li style="color: var(--text-muted); font-size: 13px;">No announcements.</li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

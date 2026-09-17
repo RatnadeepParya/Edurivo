@@ -1,0 +1,147 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Fee Collection Counter</h1>
+    <div class="page-subtitle">Idempotent, auditable student fee collection and immediate receipt generation</div>
+  </div>
+  <a href="/cashier/dashboard" class="btn btn-secondary">← Back to Cashier Desk</a>
+</div>
+
+<!-- Student Search -->
+<div class="card mb-6">
+  <form method="GET" action="/cashier/collect" class="form-row items-center">
+    <div class="form-col" style="flex: 3;">
+      <label class="form-label" for="searchStudent">Search Student by ID or Admission #</label>
+      <input type="text" id="searchStudent" name="studentId" class="form-control" placeholder="Enter Student ID (e.g. stu_...) or choose from Directory" value="<%= student ? student.id : '' %>" required>
+    </div>
+    <div style="align-self: flex-end;">
+      <button type="submit" class="btn btn-primary" style="height: 38px;">Fetch Student Records</button>
+      <a href="/admin/students" class="btn btn-secondary" style="height: 38px;">Browse Students</a>
+    </div>
+  </form>
+</div>
+
+<% if (student) { %>
+  <div class="flex gap-6" style="flex-wrap: wrap;">
+    <!-- Student Information Summary -->
+    <div style="flex: 1; min-width: 300px;">
+      <div class="card mb-6">
+        <div class="card-header">
+          <h2 class="card-title">Enrolled Student</h2>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <strong style="font-size: 16px;"><%= student.firstName %> <%= student.lastName %></strong>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">
+            Admission: <strong><%= student.admissionNumber %></strong> | <%= student.className %> (<%= student.sectionName %>)
+          </div>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <div>Roll No: <%= student.rollNumber || '-' %></div>
+          <div>Guardian: <%= student.parentName || 'N/A' %></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fee Collection Form -->
+    <div style="flex: 2; min-width: 380px;">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Process Fee Payment</h2>
+        </div>
+
+        <% if (fees && fees.length > 0) { %>
+          <form id="cashierPaymentForm" action="/cashier/collect" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="idempotencyKey" value="">
+            <input type="hidden" name="studentId" value="<%= student.id %>">
+
+            <div class="form-group">
+              <label class="form-label" for="selectFee">Select Fee Obligation to Pay *</label>
+              <select id="selectFee" name="feeId" class="form-control" required onchange="updateDueAmount(this)">
+                <option value="">Select Fee...</option>
+                <% fees.forEach(f => { %>
+                  <option value="<%= f.id %>" data-balance="<%= f.balance %>" data-total="<%= f.totalAmount %>" data-paid="<%= f.paidAmount || 0 %>">
+                    <%= f.title %> — Outstanding: $<%= Number(f.balance).toFixed(2) %> (Due: <%= f.dueDate %>)
+                  </option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div id="feeBreakdown" style="display: none; background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; margin-bottom: 16px;">
+              <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                <span>Total Obligation: <strong id="dispTotal">$0.00</strong></span>
+                <span>Already Paid: <strong id="dispPaid" style="color: var(--success);">$0.00</strong></span>
+                <span>Current Balance: <strong id="dispBalance" style="color: var(--danger);">$0.00</strong></span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-col">
+                <label class="form-label" for="payAmount">Amount to Pay ($) *</label>
+                <input type="number" id="payAmount" name="amount" class="form-control" required step="0.01" min="1" placeholder="Enter collection amount">
+              </div>
+              <div class="form-col">
+                <label class="form-label" for="payMethod">Payment Mode *</label>
+                <select id="payMethod" name="paymentMethod" class="form-control" required>
+                  <option value="CASH">Cash</option>
+                  <option value="UPI">UPI / Digital QR</option>
+                  <option value="CARD">Debit / Credit Card</option>
+                  <option value="BANK_TRANSFER">Bank Direct Transfer</option>
+                  <option value="CHEQUE">Cheque / Demand Draft</option>
+                  <option value="ONLINE">Online Gateway</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group mt-4">
+              <label class="form-label" for="payRef">Transaction / Cheque / Auth Reference</label>
+              <input type="text" id="payRef" name="transactionReference" class="form-control" placeholder="UPI Txn ID, Card Authorization code or Cheque No.">
+            </div>
+
+            <div class="form-group mt-4">
+              <label class="form-label" for="payRemarks">Cashier Remarks</label>
+              <input type="text" id="payRemarks" name="remarks" class="form-control" placeholder="e.g. Paid in full by father">
+            </div>
+
+            <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+              <button type="submit" class="btn btn-success btn-lg">Complete Collection & Print Receipt</button>
+            </div>
+          </form>
+        <% } else { %>
+          <div style="text-align: center; padding: 32px; color: var(--success); font-weight: 600;">
+            ✓ All fee obligations for this student are fully cleared! No pending balances.
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<script src="/js/cashier.js"></script>
+<script>
+  function updateDueAmount(select) {
+    const opt = select.options[select.selectedIndex];
+    const breakdown = document.getElementById('feeBreakdown');
+    const amountInput = document.getElementById('payAmount');
+
+    if (!opt || !opt.value) {
+      breakdown.style.display = 'none';
+      return;
+    }
+
+    const total = parseFloat(opt.getAttribute('data-total') || 0);
+    const paid = parseFloat(opt.getAttribute('data-paid') || 0);
+    const balance = parseFloat(opt.getAttribute('data-balance') || 0);
+
+    document.getElementById('dispTotal').textContent = '$' + total.toFixed(2);
+    document.getElementById('dispPaid').textContent = '$' + paid.toFixed(2);
+    document.getElementById('dispBalance').textContent = '$' + balance.toFixed(2);
+
+    amountInput.value = balance.toFixed(2);
+    amountInput.max = balance.toFixed(2);
+    breakdown.style.display = 'block';
+  }
+</script>
+
+<%- include('../../partials/footer') %>

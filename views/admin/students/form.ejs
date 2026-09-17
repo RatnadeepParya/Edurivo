@@ -1,0 +1,165 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Admit New Student</h1>
+    <div class="page-subtitle">Register and enroll a new student in the institutional roster</div>
+  </div>
+  <a href="/admin/students" class="btn btn-secondary">← Back to Directory</a>
+</div>
+
+<div class="card" style="max-width: 900px; margin: 0 auto;">
+  <form action="/admin/students" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+      1. Primary Student Information
+    </h3>
+
+    <div class="form-row">
+      <div class="form-col">
+        <label class="form-label" for="firstName">First Name *</label>
+        <input type="text" id="firstName" name="firstName" class="form-control" required placeholder="e.g. Liam">
+      </div>
+      <div class="form-col">
+        <label class="form-label" for="middleName">Middle Name</label>
+        <input type="text" id="middleName" name="middleName" class="form-control" placeholder="Optional">
+      </div>
+      <div class="form-col">
+        <label class="form-label" for="lastName">Last Name *</label>
+        <input type="text" id="lastName" name="lastName" class="form-control" required placeholder="e.g. Vance">
+      </div>
+    </div>
+
+    <div class="form-row mt-4">
+      <div class="form-col">
+        <label class="form-label" for="dateOfBirth">Date of Birth *</label>
+        <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required>
+      </div>
+      <div class="form-col">
+        <label class="form-label" for="gender">Gender *</label>
+        <select id="gender" name="gender" class="form-control" required>
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
+      <div class="form-col">
+        <label class="form-label" for="bloodGroup">Blood Group</label>
+        <select id="bloodGroup" name="bloodGroup" class="form-control">
+          <option value="">Select...</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+        </select>
+      </div>
+    </div>
+
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--primary); margin: 28px 0 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+      2. Academic Enrollment Details
+    </h3>
+
+    <div class="form-row">
+      <div class="form-col">
+        <label class="form-label" for="classId">Enrolling Class *</label>
+        <select id="classId" name="classId" class="form-control" required onchange="populateSections(this.value)">
+          <option value="">Select Class...</option>
+          <% classes.forEach(cls => { %>
+            <option value="<%= cls.id %>" data-sections='<%= JSON.stringify(cls.sections || []) %>'><%= cls.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="form-col">
+        <label class="form-label" for="sectionId">Section *</label>
+        <select id="sectionId" name="sectionId" class="form-control" required>
+          <option value="">Select Class first...</option>
+        </select>
+      </div>
+      <div class="form-col">
+        <label class="form-label" for="rollNumber">Roll Number</label>
+        <input type="text" id="rollNumber" name="rollNumber" class="form-control" placeholder="e.g. 101">
+      </div>
+    </div>
+
+    <div class="form-row mt-4">
+      <div class="form-col">
+        <label class="form-label" for="admissionDate">Admission Date</label>
+        <input type="date" id="admissionDate" name="admissionDate" class="form-control" value="<%= new Date().toISOString().split('T')[0] %>">
+      </div>
+      <div class="form-col">
+        <label class="form-label" for="email">Student Portal Email</label>
+        <input type="email" id="email" name="email" class="form-control" placeholder="student@edurivo.edu">
+      </div>
+      <div class="form-col">
+        <label class="form-label" for="phone">Student Phone</label>
+        <input type="text" id="phone" name="phone" class="form-control" placeholder="+1 555-0199">
+      </div>
+    </div>
+
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--primary); margin: 28px 0 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+      3. Parent / Guardian & Emergency Information
+    </h3>
+
+    <div class="form-row">
+      <div class="form-col">
+        <label class="form-label" for="parentName">Guardian / Parent Name</label>
+        <input type="text" id="parentName" name="parentName" class="form-control" placeholder="e.g. Jonathan Vance">
+      </div>
+      <div class="form-col">
+        <label class="form-label" for="parentEmail">Guardian Email</label>
+        <input type="email" id="parentEmail" name="parentEmail" class="form-control" placeholder="parent@gmail.com">
+      </div>
+      <div class="form-col">
+        <label class="form-label" for="parentPhone">Guardian Phone</label>
+        <input type="text" id="parentPhone" name="parentPhone" class="form-control" placeholder="+1 555-0128">
+      </div>
+    </div>
+
+    <div class="form-group mt-4">
+      <label class="form-label" for="address">Residential Address</label>
+      <input type="text" id="address" name="address" class="form-control" placeholder="Street Address, Apt / Suite">
+    </div>
+
+    <div class="form-group mt-4">
+      <label class="form-label" for="medicalNotes">Medical Notes / Special Accommodations</label>
+      <textarea id="medicalNotes" name="medicalNotes" class="form-control" rows="2" placeholder="Allergies, chronic conditions, emergency medical instructions..."></textarea>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px;">
+      <a href="/admin/students" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary btn-lg">Submit Admission</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function populateSections(classId) {
+    const classSelect = document.getElementById('classId');
+    const selectedOption = classSelect.options[classSelect.selectedIndex];
+    const sectionSelect = document.getElementById('sectionId');
+    sectionSelect.innerHTML = '<option value="">Select Section...</option>';
+
+    if (!selectedOption || !selectedOption.getAttribute('data-sections')) return;
+    const sections = JSON.parse(selectedOption.getAttribute('data-sections'));
+    sections.forEach(sec => {
+      const opt = document.createElement('option');
+      opt.value = sec.id;
+      opt.textContent = sec.name;
+      sectionSelect.appendChild(opt);
+    });
+
+    if (sections.length === 0) {
+      const defaultOpt = document.createElement('option');
+      defaultOpt.value = 'sec_default';
+      defaultOpt.textContent = 'Section A';
+      sectionSelect.appendChild(defaultOpt);
+    }
+  }
+</script>
+
+<%- include('../../partials/footer') %>

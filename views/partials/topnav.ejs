@@ -1,0 +1,28 @@
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="breadcrumbs">
+      <span style="font-weight: 600; color: var(--text-main);"><%= school.name %></span>
+      <span> / </span>
+      <span><%= title.split('|')[0].trim() %></span>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <div style="font-size: 13px; color: var(--text-muted);">
+      Session: <strong style="color: var(--primary);"><%= school.currentSessionName %></strong>
+    </div>
+
+    <% if (currentUser) { %>
+      <div class="user-profile-menu">
+        <div class="user-avatar">
+          <%= (currentUser.displayName || currentUser.email).charAt(0).toUpperCase() %>
+        </div>
+        <div class="user-info">
+          <div class="user-name"><%= currentUser.displayName || currentUser.email %></div>
+          <div class="user-role"><%= currentUser.role %></div>
+        </div>
+        <a href="/auth/logout" class="btn btn-secondary btn-sm" style="margin-left: 8px;">Logout</a>
+      </div>
+    <% } %>
+  </div>
+</header>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>404 - Page Not Found | Edurivo</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body style="display:flex; align-items:center; justify-content:center; min-height:100vh; background:#f8fafc;">
+  <div class="card" style="max-width:480px; text-align:center; padding:40px;">
+    <div style="font-size:48px; margin-bottom:16px;">🔍</div>
+    <h2 style="font-size:24px; font-weight:700; margin-bottom:12px; color:var(--text-main);">404 Not Found</h2>
+    <p style="color:var(--text-muted); margin-bottom:24px;">
+      The page or resource you are looking for at <code style="background:#f1f5f9; padding:2px 6px; border-radius:4px;"><%= typeof url !== 'undefined' ? url : '' %></code> could not be found.
+    </p>
+    <a href="/" class="btn btn-primary">Return to Safety</a>
+  </div>
+</body>
+</html>

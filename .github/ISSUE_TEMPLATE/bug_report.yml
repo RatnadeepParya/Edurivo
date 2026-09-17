@@ -1,0 +1,85 @@
+name: 🐛 Bug Report
+description: Create a report to help us improve Edurivo
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the sections below.
+
+  - type: input
+    id: version
+    attributes:
+      label: Edurivo Version & Node.js Version
+      description: What version of Node.js and Edurivo are you using?
+      placeholder: Node v20+, Edurivo v1.0.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Affected Module / Component
+      description: Which part of the system is encountering the defect?
+      options:
+        - Authentication & RBAC
+        - Student Management
+        - Teacher & HR Management
+        - Academics & Timetable
+        - Attendance Register
+        - Examinations & Grades
+        - Fee Collection & Cashier
+        - Transport & Fleet
+        - Library & Inventory
+        - Reporting & Analytics
+        - Cloud Functions / Firebase
+        - REST API / Security
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe the problem clearly...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can maintainers reproduce this issue?
+      placeholder: |
+        1. Login as 'CASHIER'
+        2. Navigate to '/cashier/collect'
+        3. Enter student ID 'stu_liam'
+        4. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Server Logs or Console Output
+      description: Paste any error stack traces or terminal output.
+      render: shell
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Self-Check
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate.
+          required: true
+        - label: I have tested with a clean database seed (`npm run seed`).
+          required: false

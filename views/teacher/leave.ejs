@@ -1,0 +1,89 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Faculty Leave Portal</h1>
+    <div class="page-subtitle">Submit formal leave applications and review leave status</div>
+  </div>
+</div>
+
+<div class="flex gap-6" style="flex-wrap: wrap;">
+  <!-- Application Form -->
+  <div style="flex: 1; min-width: 320px;">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Apply for Leave</h2>
+      </div>
+      <form action="/admin/leave" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group">
+          <label class="form-label" for="lType">Leave Category *</label>
+          <select id="lType" name="type" class="form-control" required>
+            <option value="CASUAL">Casual Leave</option>
+            <option value="SICK">Medical / Sick Leave</option>
+            <option value="MATERNITY">Maternity / Paternity</option>
+            <option value="UNPAID">Unpaid Special Leave</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label" for="lStart">From Date *</label>
+            <input type="date" id="lStart" name="startDate" class="form-control" required>
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="lEnd">To Date *</label>
+            <input type="date" id="lEnd" name="endDate" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-group mt-4">
+          <label class="form-label" for="lReason">Reason for Absence *</label>
+          <textarea id="lReason" name="reason" class="form-control" rows="3" required placeholder="State reason for requested leave..."></textarea>
+        </div>
+        <div style="margin-top: 20px;">
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Past Leave Applications -->
+  <div style="flex: 2; min-width: 360px;">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">My Leave Applications</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>From - To</th>
+              <th>Reason</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (leaves && leaves.length > 0) { %>
+              <% leaves.forEach(lev => { %>
+                <tr>
+                  <td><span class="badge badge-info"><%= lev.type %></span></td>
+                  <td><%= lev.startDate %> to <%= lev.endDate %></td>
+                  <td><%= lev.reason %></td>
+                  <td>
+                    <span class="badge <%= lev.status === 'APPROVED' ? 'badge-success' : (lev.status === 'REJECTED' ? 'badge-danger' : 'badge-warning') %>">
+                      <%= lev.status %>
+                    </span>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No prior leave requests recorded.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

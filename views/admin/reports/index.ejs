@@ -1,0 +1,56 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Executive Reports & Audits</h1>
+    <div class="page-subtitle">Generate financial, attendance, and administrative statements</div>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <a href="/admin/reports/export/collection" class="btn btn-secondary">📥 Export Today's Collections (CSV)</a>
+    <a href="/admin/reports/export/outstanding" class="btn btn-secondary">📥 Export Outstanding Dues (CSV)</a>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon success">💵</div>
+    <div>
+      <div class="stat-value">$<%= (collectionReport.totalAmount || 0).toLocaleString() %></div>
+      <div class="stat-label">Today's Collections (<%= collectionReport.count || 0 %> Txns)</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon danger">⏳</div>
+    <div>
+      <div class="stat-value">$<%= (outstandingReport.totalOutstanding || 0).toLocaleString() %></div>
+      <div class="stat-label">Total Outstanding Dues</div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-6">
+  <div class="card-header">
+    <h2 class="card-title">Collection Method Breakdown</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Payment Method</th>
+          <th style="text-align: right;">Total Collected</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const [method, amount] of Object.entries(collectionReport.byMethod || {})) { %>
+          <tr>
+            <td><strong><%= method %></strong></td>
+            <td style="text-align: right;">$<%= Number(amount).toFixed(2) %></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

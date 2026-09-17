@@ -1,0 +1,127 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">🎓 Edurivo</div>
+    <span class="sidebar-badge"><%= currentUser ? currentUser.role : 'GUEST' %></span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <% if (currentUser) { %>
+      <% if (currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN') { %>
+        <div class="nav-section-title">Core Management</div>
+        <a href="/admin/dashboard" class="nav-link <%= currentPath === '/admin/dashboard' ? 'active' : '' %>">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a href="/admin/students" class="nav-link <%= currentPath.startsWith('/admin/students') ? 'active' : '' %>">
+          <span class="nav-icon">👨‍🎓</span> Students
+        </a>
+        <a href="/admin/teachers" class="nav-link <%= currentPath.startsWith('/admin/teachers') ? 'active' : '' %>">
+          <span class="nav-icon">👩‍🏫</span> Teachers & Staff
+        </a>
+        <a href="/admin/classes" class="nav-link <%= currentPath.startsWith('/admin/classes') ? 'active' : '' %>">
+          <span class="nav-icon">🏫</span> Classes & Subjects
+        </a>
+
+        <div class="nav-section-title">Academic Operations</div>
+        <a href="/admin/attendance" class="nav-link <%= currentPath.startsWith('/admin/attendance') ? 'active' : '' %>">
+          <span class="nav-icon">📅</span> Attendance
+        </a>
+        <a href="/admin/exams" class="nav-link <%= currentPath.startsWith('/admin/exams') ? 'active' : '' %>">
+          <span class="nav-icon">📝</span> Examinations
+        </a>
+
+        <div class="nav-section-title">Finance & Cashier</div>
+        <a href="/admin/fees" class="nav-link <%= currentPath.startsWith('/admin/fees') ? 'active' : '' %>">
+          <span class="nav-icon">💳</span> Fee Structures
+        </a>
+        <a href="/cashier/dashboard" class="nav-link <%= currentPath.startsWith('/cashier') ? 'active' : '' %>">
+          <span class="nav-icon">💵</span> Cashier Counter
+        </a>
+        <a href="/admin/expenses" class="nav-link <%= currentPath.startsWith('/admin/expenses') ? 'active' : '' %>">
+          <span class="nav-icon">🧾</span> Expenses
+        </a>
+
+        <div class="nav-section-title">HR & Operations</div>
+        <a href="/admin/payroll" class="nav-link <%= currentPath.startsWith('/admin/payroll') ? 'active' : '' %>">
+          <span class="nav-icon">💰</span> Payroll
+        </a>
+        <a href="/admin/leave" class="nav-link <%= currentPath.startsWith('/admin/leave') ? 'active' : '' %>">
+          <span class="nav-icon">🏖️</span> Leaves
+        </a>
+        <a href="/admin/library" class="nav-link <%= currentPath.startsWith('/admin/library') ? 'active' : '' %>">
+          <span class="nav-icon">📚</span> Library
+        </a>
+        <a href="/admin/inventory" class="nav-link <%= currentPath.startsWith('/admin/inventory') ? 'active' : '' %>">
+          <span class="nav-icon">📦</span> Inventory Ledger
+        </a>
+        <a href="/admin/transport" class="nav-link <%= currentPath.startsWith('/admin/transport') ? 'active' : '' %>">
+          <span class="nav-icon">🚌</span> Transport
+        </a>
+
+        <div class="nav-section-title">Communication & Audit</div>
+        <a href="/admin/notices" class="nav-link <%= currentPath.startsWith('/admin/notices') ? 'active' : '' %>">
+          <span class="nav-icon">📢</span> Notices & Events
+        </a>
+        <a href="/admin/reports" class="nav-link <%= currentPath.startsWith('/admin/reports') ? 'active' : '' %>">
+          <span class="nav-icon">📈</span> Reports
+        </a>
+        <a href="/admin/audit" class="nav-link <%= currentPath.startsWith('/admin/audit') ? 'active' : '' %>">
+          <span class="nav-icon">🛡️</span> Audit Logs
+        </a>
+        <a href="/admin/settings" class="nav-link <%= currentPath.startsWith('/admin/settings') ? 'active' : '' %>">
+          <span class="nav-icon">⚙️</span> Settings
+        </a>
+      <% } else if (currentUser.role === 'TEACHER') { %>
+        <div class="nav-section-title">Teacher Portal</div>
+        <a href="/teacher/dashboard" class="nav-link <%= currentPath === '/teacher/dashboard' ? 'active' : '' %>">
+          <span class="nav-icon">📊</span> Overview
+        </a>
+        <a href="/teacher/attendance" class="nav-link <%= currentPath.startsWith('/teacher/attendance') ? 'active' : '' %>">
+          <span class="nav-icon">📅</span> Attendance
+        </a>
+        <a href="/teacher/marks" class="nav-link <%= currentPath.startsWith('/teacher/marks') ? 'active' : '' %>">
+          <span class="nav-icon">📝</span> Marks Entry
+        </a>
+        <a href="/teacher/homework" class="nav-link <%= currentPath.startsWith('/teacher/homework') ? 'active' : '' %>">
+          <span class="nav-icon">📖</span> Homework
+        </a>
+        <a href="/teacher/timetable" class="nav-link <%= currentPath.startsWith('/teacher/timetable') ? 'active' : '' %>">
+          <span class="nav-icon">⏰</span> My Timetable
+        </a>
+        <a href="/teacher/leave" class="nav-link <%= currentPath.startsWith('/teacher/leave') ? 'active' : '' %>">
+          <span class="nav-icon">🏖️</span> Apply Leave
+        </a>
+      <% } else if (currentUser.role === 'STUDENT') { %>
+        <div class="nav-section-title">Student Portal</div>
+        <a href="/student/dashboard" class="nav-link <%= currentPath === '/student/dashboard' ? 'active' : '' %>">
+          <span class="nav-icon">📊</span> Overview
+        </a>
+        <a href="/student/attendance" class="nav-link <%= currentPath.startsWith('/student/attendance') ? 'active' : '' %>">
+          <span class="nav-icon">📅</span> My Attendance
+        </a>
+        <a href="/student/results" class="nav-link <%= currentPath.startsWith('/student/results') ? 'active' : '' %>">
+          <span class="nav-icon">🏆</span> Exam Results
+        </a>
+        <a href="/student/fees" class="nav-link <%= currentPath.startsWith('/student/fees') ? 'active' : '' %>">
+          <span class="nav-icon">💳</span> Fee Status & Receipts
+        </a>
+        <a href="/student/timetable" class="nav-link <%= currentPath.startsWith('/student/timetable') ? 'active' : '' %>">
+          <span class="nav-icon">⏰</span> Class Routine
+        </a>
+        <a href="/student/homework" class="nav-link <%= currentPath.startsWith('/student/homework') ? 'active' : '' %>">
+          <span class="nav-icon">📖</span> Homework
+        </a>
+      <% } else if (currentUser.role === 'CASHIER') { %>
+        <div class="nav-section-title">Cashier Operations</div>
+        <a href="/cashier/dashboard" class="nav-link <%= currentPath === '/cashier/dashboard' ? 'active' : '' %>">
+          <span class="nav-icon">📊</span> Overview
+        </a>
+        <a href="/cashier/collect" class="nav-link <%= currentPath.startsWith('/cashier/collect') ? 'active' : '' %>">
+          <span class="nav-icon">💵</span> Collect Fee
+        </a>
+        <a href="/cashier/session" class="nav-link <%= currentPath.startsWith('/cashier/session') ? 'active' : '' %>">
+          <span class="nav-icon">🗄️</span> Cash Drawer & Closing
+        </a>
+      <% } %>
+    <% } %>
+  </nav>
+</aside>

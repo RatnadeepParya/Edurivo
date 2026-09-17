@@ -1,0 +1,157 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Executive Institutional Dashboard</h1>
+    <div class="page-subtitle">Unified School Operational Overview & Real-Time Metrics</div>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <a href="/admin/students/new" class="btn btn-primary">+ Admit Student</a>
+    <a href="/cashier/collect" class="btn btn-success">Collect Fees</a>
+  </div>
+</div>
+
+<!-- Primary Stats Grid -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon primary">👨‍🎓</div>
+    <div>
+      <div class="stat-value"><%= stats.studentCount %></div>
+      <div class="stat-label">Active Students</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon info">👩‍🏫</div>
+    <div>
+      <div class="stat-value"><%= stats.teacherCount %></div>
+      <div class="stat-label">Faculty & Staff</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon success">📅</div>
+    <div>
+      <div class="stat-value"><%= stats.attendanceRate %>%</div>
+      <div class="stat-label">Today's Attendance Rate</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon warning">💵</div>
+    <div>
+      <div class="stat-value">$<%= Number(stats.todayCollection).toLocaleString() %></div>
+      <div class="stat-label">Today's Fee Collection</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon danger">⏳</div>
+    <div>
+      <div class="stat-value">$<%= Number(stats.pendingFees).toLocaleString() %></div>
+      <div class="stat-label">Outstanding Fees</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon primary">🧾</div>
+    <div>
+      <div class="stat-value">$<%= Number(stats.totalExpenses).toLocaleString() %></div>
+      <div class="stat-label">Total School Expenses</div>
+    </div>
+  </div>
+</div>
+
+<div class="flex gap-6 mt-6" style="flex-wrap: wrap;">
+  <!-- Upcoming Exams & Events -->
+  <div style="flex: 1; min-width: 340px;">
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2 class="card-title">📝 Upcoming Examinations</h2>
+        <a href="/admin/exams" class="btn btn-secondary btn-sm">Manage</a>
+      </div>
+      <% if (stats.upcomingExams && stats.upcomingExams.length > 0) { %>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Exam Name</th>
+                <th>Type</th>
+                <th>Start Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% stats.upcomingExams.forEach(exam => { %>
+                <tr>
+                  <td><strong><%= exam.name %></strong></td>
+                  <td><span class="badge badge-info"><%= exam.type %></span></td>
+                  <td><%= exam.startDate %></td>
+                  <td><span class="badge <%= exam.isPublished ? 'badge-success' : 'badge-warning' %>"><%= exam.status %></span></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <p style="color: var(--text-muted); font-size: 13px;">No examinations currently scheduled.</p>
+      <% } %>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">🎉 Upcoming Events & Holidays</h2>
+        <a href="/admin/notices" class="btn btn-secondary btn-sm">View Calendar</a>
+      </div>
+      <% if (stats.upcomingEvents && stats.upcomingEvents.length > 0) { %>
+        <ul style="list-style: none;">
+          <% stats.upcomingEvents.forEach(ev => { %>
+            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between;">
+              <div>
+                <strong><%= ev.title %></strong>
+                <div style="font-size: 12px; color: var(--text-muted);"><%= ev.description || '' %></div>
+              </div>
+              <span class="badge badge-neutral"><%= ev.startDate %></span>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p style="color: var(--text-muted); font-size: 13px;">No events on schedule.</p>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Real-Time Activity & Audit Stream -->
+  <div style="flex: 1; min-width: 340px;">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">🛡️ Recent Security & Audit Logs</h2>
+        <a href="/admin/audit" class="btn btn-secondary btn-sm">Full Trail</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Module</th>
+              <th>User</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% (stats.recentAudit || []).forEach(log => { %>
+              <tr>
+                <td><span class="badge badge-neutral"><%= log.action %></span></td>
+                <td><strong><%= log.module %></strong></td>
+                <td><%= log.userId %></td>
+                <td style="font-size: 11px; color: var(--text-muted);"><%= new Date(log.timestamp).toLocaleTimeString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

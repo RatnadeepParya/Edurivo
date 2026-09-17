@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Edurivo | School Management' %></title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/print.css" media="print">
+</head>
+<body>
+  <div class="app-wrapper">
+    <%- include('sidebar') %>
+    <div class="main-wrapper">
+      <%- include('topnav') %>
+      <main class="content-area">
+        <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+          <div class="alert alert-success">
+            <span>✓</span>
+            <span><%= successMessage === 'admitted' ? 'Student admitted successfully!' : successMessage %></span>
+          </div>
+        <% } %>
+        <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+          <div class="alert alert-danger">
+            <span>⚠</span>
+            <span><%= errorMessage %></span>
+          </div>
+        <% } %>

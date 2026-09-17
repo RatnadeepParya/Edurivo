@@ -1,0 +1,163 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Fee Management & Structures</h1>
+    <div class="page-subtitle">Configure school fee components, billing schedules and class assignment</div>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <button type="button" class="btn btn-primary" data-modal-target="createFeeStructureModal">+ Create Fee Structure</button>
+    <button type="button" class="btn btn-success" data-modal-target="assignFeeModal">Assign Fee to Class</button>
+  </div>
+</div>
+
+<div class="flex gap-6" style="flex-wrap: wrap;">
+  <!-- Fee Structures Table -->
+  <div style="flex: 2; min-width: 380px;">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Configured Fee Structures</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fee Name</th>
+              <th>Due Date</th>
+              <th>Total Amount</th>
+              <th>Components</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (feeStructures && feeStructures.length > 0) { %>
+              <% feeStructures.forEach(fst => { %>
+                <tr>
+                  <td><strong><%= fst.name %></strong></td>
+                  <td><%= fst.dueDate %></td>
+                  <td><strong>$<%= Number(fst.totalAmount).toFixed(2) %></strong></td>
+                  <td>
+                    <% (fst.components || []).forEach(c => { %>
+                      <span class="badge badge-neutral"><%= c.name %>: $<%= c.amount %></span>
+                    <% }) %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 32px;">
+                  No fee structures created yet.
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Outstanding Dues Summary -->
+  <div style="flex: 1; min-width: 280px;">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Outstanding Summary</h2>
+      </div>
+      <div style="text-align: center; padding: 20px 0;">
+        <div style="font-size: 32px; font-weight: 800; color: var(--danger);">
+          $<%= (outstandingReport.totalOutstanding || 0).toLocaleString() %>
+        </div>
+        <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+          Pending across <%= outstandingReport.count || 0 %> student obligations
+        </div>
+      </div>
+      <div style="border-top: 1px solid var(--border-color); padding-top: 16px;">
+        <a href="/cashier/collect" class="btn btn-primary" style="width: 100%;">Go to Cashier Collection</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Fee Structure Modal -->
+<div id="createFeeStructureModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-size: 16px; font-weight: 700;">Create Fee Structure</h3>
+      <button type="button" data-modal-close style="border:none;background:none;font-size:20px;cursor:pointer;">&times;</button>
+    </div>
+    <form action="/admin/fees/structure" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="fstName">Fee Title *</label>
+          <input type="text" id="fstName" name="name" class="form-control" required placeholder="e.g. Term 1 Tuition & Lab Fee">
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label" for="fstClass">Target Class *</label>
+            <select id="fstClass" name="classId" class="form-control" required>
+              <% classes.forEach(cls => { %>
+                <option value="<%= cls.id %>"><%= cls.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="fstDue">Due Date *</label>
+            <input type="date" id="fstDue" name="dueDate" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-group mt-4">
+          <label class="form-label" for="fstAmount">Total Fee Amount ($) *</label>
+          <input type="number" id="fstAmount" name="totalAmount" class="form-control" required step="0.01" placeholder="1200.00">
+        </div>
+        <input type="hidden" name="academicSessionId" value="session_2025_2026">
+        <input type="hidden" name="components[0][name]" value="Tuition Fee">
+        <input type="hidden" name="components[0][amount]" value="1000">
+        <input type="hidden" name="components[1][name]" value="Library & Development">
+        <input type="hidden" name="components[1][amount]" value="200">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Structure</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Assign Fee Modal -->
+<div id="assignFeeModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-size: 16px; font-weight: 700;">Assign Fee to Class Roster</h3>
+      <button type="button" data-modal-close style="border:none;background:none;font-size:20px;cursor:pointer;">&times;</button>
+    </div>
+    <form action="/admin/fees/assign" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="assignStructure">Select Fee Structure *</label>
+          <select id="assignStructure" name="feeStructureId" class="form-control" required>
+            <% feeStructures.forEach(fst => { %>
+              <option value="<%= fst.id %>"><%= fst.name %> ($<%= fst.totalAmount %>)</option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="assignClass">Assign to Class *</label>
+          <select id="assignClass" name="classId" class="form-control" required>
+            <% classes.forEach(cls => { %>
+              <option value="<%= cls.id %>"><%= cls.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+          This will generate pending ledger dues for each enrolled student in this class.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-success">Assign Fee</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

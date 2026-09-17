@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>500 - System Error | Edurivo</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body style="display:flex; align-items:center; justify-content:center; min-height:100vh; background:#f8fafc;">
+  <div class="card" style="max-width:540px; text-align:center; padding:40px;">
+    <div style="font-size:48px; margin-bottom:16px;">⚠️</div>
+    <h2 style="font-size:24px; font-weight:700; margin-bottom:12px; color:var(--danger);">500 Internal Server Error</h2>
+    <p style="color:var(--text-muted); margin-bottom:24px;">
+      <%= typeof message !== 'undefined' ? message : 'An unexpected error occurred. Technical logs have been dispatched to administrators.' %>
+    </p>
+    <% if (typeof stack !== 'undefined' && stack) { %>
+      <pre style="text-align:left; background:#0f172a; color:#f8fafc; padding:12px; border-radius:6px; font-size:11px; overflow-x:auto; margin-bottom:20px;"><%= stack %></pre>
+    <% } %>
+    <a href="/" class="btn btn-primary">Go to Dashboard</a>
+  </div>
+</body>
+</html>

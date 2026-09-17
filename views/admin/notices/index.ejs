@@ -1,0 +1,83 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Notices, Circulars & Announcements</h1>
+    <div class="page-subtitle">Publish institutional communications, policy updates, and event bulletins</div>
+  </div>
+  <button type="button" class="btn btn-primary" data-modal-target="publishNoticeModal">+ Publish Circular</button>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">School Circulars</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Published Date</th>
+          <th>Notice Title</th>
+          <th>Audience</th>
+          <th>Publisher</th>
+          <th>Content Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (notices && notices.length > 0) { %>
+          <% notices.forEach(n => { %>
+            <tr>
+              <td><%= n.createdAt.split('T')[0] %></td>
+              <td><strong><%= n.title %></strong></td>
+              <td><span class="badge badge-info"><%= n.targetAudience || 'ALL' %></span></td>
+              <td><%= n.publishedBy %></td>
+              <td style="color: var(--text-muted); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <%= n.content %>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 32px;">No notices published yet.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Publish Notice Modal -->
+<div id="publishNoticeModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-size: 16px; font-weight: 700;">Publish New Notice / Circular</h3>
+      <button type="button" data-modal-close style="border:none;background:none;font-size:20px;cursor:pointer;">&times;</button>
+    </div>
+    <form action="/admin/notices" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="nTitle">Notice Title *</label>
+          <input type="text" id="nTitle" name="title" class="form-control" required placeholder="e.g. Annual Sports Meet 2025 Schedule">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="nAudience">Target Audience *</label>
+          <select id="nAudience" name="targetAudience" class="form-control" required>
+            <option value="ALL">Entire School (All Students, Parents & Staff)</option>
+            <option value="STUDENTS">Students Only</option>
+            <option value="TEACHERS">Faculty & Teachers Only</option>
+            <option value="STAFF">General Staff Only</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="nContent">Notice Content / Announcement *</label>
+          <textarea id="nContent" name="content" class="form-control" rows="4" required placeholder="Write official announcement details here..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Publish Circular</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

@@ -1,0 +1,131 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Class Attendance Register</h1>
+    <div class="page-subtitle">Mark daily student attendance for assigned classes</div>
+  </div>
+</div>
+
+<div class="card mb-6">
+  <form method="GET" action="/teacher/attendance" class="form-row items-center">
+    <div class="form-col">
+      <label class="form-label" for="tClass">Class</label>
+      <select id="tClass" name="classId" class="form-control" required onchange="populateTeacherSections(this.value)">
+        <option value="">Choose Class...</option>
+        <% classes.forEach(cls => { %>
+          <option value="<%= cls.id %>" data-sections='<%= JSON.stringify(cls.sections || []) %>' <%= selectedClass === cls.id ? 'selected' : '' %>><%= cls.name %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="form-col">
+      <label class="form-label" for="tSection">Section</label>
+      <select id="tSection" name="sectionId" class="form-control" required>
+        <option value="">Choose Section...</option>
+      </select>
+    </div>
+    <div class="form-col">
+      <label class="form-label" for="tDate">Date</label>
+      <input type="date" id="tDate" name="date" class="form-control" value="<%= selectedDate %>" required>
+    </div>
+    <div style="align-self: flex-end;">
+      <button type="submit" class="btn btn-primary" style="height: 38px;">Open Sheet</button>
+    </div>
+  </form>
+</div>
+
+<% if (attendanceGrid && attendanceGrid.length > 0) { %>
+  <div class="card">
+    <div class="card-header">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <h2 class="card-title">Class Sheet (<%= attendanceGrid.length %> Students)</h2>
+        <span class="badge badge-info"><%= selectedDate %></span>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" id="markAllPresentBtn" class="btn btn-success btn-sm">Mark All Present</button>
+        <button type="button" id="markAllAbsentBtn" class="btn btn-danger btn-sm">Mark All Absent</button>
+      </div>
+    </div>
+
+    <form id="attendanceForm">
+      <input type="hidden" name="classId" value="<%= selectedClass %>">
+      <input type="hidden" name="sectionId" value="<%= selectedSection %>">
+      <input type="hidden" name="date" value="<%= selectedDate %>">
+
+      <div class="table-responsive">
+        <table class="table attendance-grid-table">
+          <thead>
+            <tr>
+              <th>Roll #</th>
+              <th>Student Name</th>
+              <th style="text-align: center;">Attendance</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% attendanceGrid.forEach(st => { %>
+              <tr data-student-id="<%= st.studentId %>">
+                <td><strong><%= st.rollNumber || '-' %></strong></td>
+                <td><strong><%= st.firstName %> <%= st.lastName %></strong></td>
+                <td style="text-align: center;">
+                  <input type="hidden" class="student-status-input" value="<%= st.status === 'UNMARKED' ? 'PRESENT' : st.status %>">
+                  <div class="status-btn-group">
+                    <button type="button" class="status-btn <%= st.status === 'PRESENT' || st.status === 'UNMARKED' ? 'selected-P' : '' %>" data-status="PRESENT">P</button>
+                    <button type="button" class="status-btn <%= st.status === 'ABSENT' ? 'selected-A' : '' %>" data-status="ABSENT">A</button>
+                    <button type="button" class="status-btn <%= st.status === 'LATE' ? 'selected-L' : '' %>" data-status="LATE">L</button>
+                    <button type="button" class="status-btn <%= st.status === 'HALF_DAY' ? 'selected-H' : '' %>" data-status="HALF_DAY">H</button>
+                    <button type="button" class="status-btn <%= st.status === 'EXCUSED' ? 'selected-E' : '' %>" data-status="EXCUSED">E</button>
+                  </div>
+                </td>
+                <td>
+                  <input type="text" class="form-control student-remarks-input" style="padding: 4px 8px; font-size: 12px;" placeholder="Optional note" value="<%= st.remarks || '' %>">
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+        <button type="submit" class="btn btn-primary btn-lg">Submit Attendance</button>
+      </div>
+    </form>
+  </div>
+<% } %>
+
+<script src="/js/attendance.js"></script>
+<script>
+  function populateTeacherSections(classId) {
+    const classSelect = document.getElementById('tClass');
+    const selectedOption = classSelect.options[classSelect.selectedIndex];
+    const sectionSelect = document.getElementById('tSection');
+    sectionSelect.innerHTML = '<option value="">Select Section...</option>';
+
+    if (!selectedOption || !selectedOption.getAttribute('data-sections')) return;
+    const sections = JSON.parse(selectedOption.getAttribute('data-sections'));
+    sections.forEach(sec => {
+      const opt = document.createElement('option');
+      opt.value = sec.id;
+      opt.textContent = sec.name;
+      if (sec.id === '<%= selectedSection %>') opt.selected = true;
+      sectionSelect.appendChild(opt);
+    });
+
+    if (sections.length === 0) {
+      const defaultOpt = document.createElement('option');
+      defaultOpt.value = 'sec_default';
+      defaultOpt.textContent = 'Section A';
+      defaultOpt.selected = true;
+      sectionSelect.appendChild(defaultOpt);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const classSelect = document.getElementById('tClass');
+    if (classSelect && classSelect.value) {
+      populateTeacherSections(classSelect.value);
+    }
+  });
+</script>
+
+<%- include('../partials/footer') %>

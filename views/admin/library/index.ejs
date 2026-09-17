@@ -1,0 +1,99 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Library Management System</h1>
+    <div class="page-subtitle">Catalog books, manage circulations, issues and returns</div>
+  </div>
+  <button type="button" class="btn btn-primary" data-modal-target="addBookModal">+ Add Book to Catalog</button>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">Book Catalog</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ISBN</th>
+          <th>Book Title</th>
+          <th>Author</th>
+          <th>Category</th>
+          <th>Available / Total</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (books && books.length > 0) { %>
+          <% books.forEach(b => { %>
+            <tr>
+              <td><code><%= b.isbn %></code></td>
+              <td><strong><%= b.title %></strong></td>
+              <td><%= b.author %></td>
+              <td><span class="badge badge-info"><%= b.category %></span></td>
+              <td><%= b.availableCopies %> / <%= b.totalCopies %></td>
+              <td>
+                <span class="badge <%= b.availableCopies > 0 ? 'badge-success' : 'badge-danger' %>">
+                  <%= b.availableCopies > 0 ? 'IN STOCK' : 'CHECKED OUT' %>
+                </span>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 32px;">No books registered in catalog.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Book Modal -->
+<div id="addBookModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-size: 16px; font-weight: 700;">Add Book to Library</h3>
+      <button type="button" data-modal-close style="border:none;background:none;font-size:20px;cursor:pointer;">&times;</button>
+    </div>
+    <form action="/admin/library/books" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="bTitle">Book Title *</label>
+          <input type="text" id="bTitle" name="title" class="form-control" required placeholder="e.g. Fundamentals of Physics">
+        </div>
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label" for="bAuthor">Author *</label>
+            <input type="text" id="bAuthor" name="author" class="form-control" required placeholder="e.g. Halliday & Resnick">
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="bIsbn">ISBN *</label>
+            <input type="text" id="bIsbn" name="isbn" class="form-control" required placeholder="978-0470556535">
+          </div>
+        </div>
+        <div class="form-row mt-4">
+          <div class="form-col">
+            <label class="form-label" for="bCat">Category</label>
+            <select id="bCat" name="category" class="form-control">
+              <option value="Science">Science & Engineering</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Literature">Literature & Fiction</option>
+              <option value="History">History & Social Sciences</option>
+            </select>
+          </div>
+          <div class="form-col">
+            <label class="form-label" for="bCopies">Number of Copies *</label>
+            <input type="number" id="bCopies" name="totalCopies" class="form-control" value="5" min="1">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Book</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

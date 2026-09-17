@@ -1,0 +1,69 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Faculty Portal</h1>
+    <div class="page-subtitle">Welcome back, <%= currentUser.displayName %> | Academic Center</div>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <a href="/teacher/attendance" class="btn btn-primary">Take Class Attendance</a>
+    <a href="/teacher/marks" class="btn btn-secondary">Enter Grades</a>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon primary">🏫</div>
+    <div>
+      <div class="stat-value"><%= (classes || []).length %></div>
+      <div class="stat-label">Enrolled Classes</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon info">📝</div>
+    <div>
+      <div class="stat-value"><%= (stats.upcomingExams || []).length %></div>
+      <div class="stat-label">Upcoming Assessments</div>
+    </div>
+  </div>
+</div>
+
+<div class="flex gap-6 mt-6" style="flex-wrap: wrap;">
+  <div style="flex: 2; min-width: 320px;">
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2 class="card-title">Quick Actions</h2>
+      </div>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="/teacher/attendance" class="btn btn-secondary">📅 Attendance Register</a>
+        <a href="/teacher/marks" class="btn btn-secondary">✍️ Marks & Assessment</a>
+        <a href="/teacher/homework" class="btn btn-secondary">📖 Assign Homework</a>
+        <a href="/teacher/timetable" class="btn btn-secondary">⏰ View Routine</a>
+        <a href="/teacher/leave" class="btn btn-secondary">🏖️ Apply for Leave</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex: 1; min-width: 300px;">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">📢 Faculty Bulletins</h2>
+      </div>
+      <ul style="list-style: none;">
+        <% if (stats.notices && stats.notices.length > 0) { %>
+          <% stats.notices.forEach(n => { %>
+            <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+              <strong><%= n.title %></strong>
+              <div style="font-size: 11px; color: var(--text-muted);"><%= n.content %></div>
+            </li>
+          <% }) %>
+        <% } else { %>
+          <li style="color: var(--text-muted); font-size: 13px;">No new announcements.</li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

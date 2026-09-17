@@ -1,0 +1,51 @@
+name: 🚀 Feature Request / Module Proposal
+description: Suggest an idea or architectural improvement for Edurivo
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for proposing an enhancement to Edurivo!
+
+  - type: input
+    id: title-summary
+    attributes:
+      label: Feature Title
+      placeholder: e.g. Add SMS gateway integration for attendance alerts
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear and concise description of what problem this solves.
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Describe the solution you'd like
+      description: Detailed explanation of the architectural approach, routes, and services involved.
+      placeholder: Provide technical design notes...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: framework-compliance
+    attributes:
+      label: Architectural Compliance Check
+      description: Edurivo enforces pure Node.js + Express + EJS + Vanilla JS without external frontend frameworks.
+      options:
+        - "Confirmed: Uses EJS, Vanilla JS, and Express Service Layer"
+        - "Requires discussion"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: Any alternative solutions or features you've evaluated.

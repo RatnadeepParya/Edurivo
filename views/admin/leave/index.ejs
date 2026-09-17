@@ -1,0 +1,66 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Leave Applications & Approvals</h1>
+    <div class="page-subtitle">Review faculty and staff leave requests and balance tracking</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Applicant</th>
+          <th>Leave Type</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Reason</th>
+          <th>Status</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (leaves && leaves.length > 0) { %>
+          <% leaves.forEach(lev => { %>
+            <tr>
+              <td><strong><%= lev.applicantName || lev.applicantId %></strong></td>
+              <td><span class="badge badge-info"><%= lev.type || 'CASUAL' %></span></td>
+              <td><%= lev.startDate %></td>
+              <td><%= lev.endDate %></td>
+              <td><%= lev.reason %></td>
+              <td>
+                <span class="badge <%= lev.status === 'APPROVED' ? 'badge-success' : (lev.status === 'REJECTED' ? 'badge-danger' : 'badge-warning') %>">
+                  <%= lev.status %>
+                </span>
+              </td>
+              <td style="text-align: right;">
+                <% if (lev.status === 'PENDING') { %>
+                  <form action="/admin/leave/review" method="POST" style="display: inline;">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="leaveId" value="<%= lev.id %>">
+                    <input type="hidden" name="status" value="APPROVED">
+                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                  </form>
+                  <form action="/admin/leave/review" method="POST" style="display: inline;">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="leaveId" value="<%= lev.id %>">
+                    <input type="hidden" name="status" value="REJECTED">
+                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                  </form>
+                <% } else { %>
+                  <span style="font-size: 12px; color: var(--text-muted);">Reviewed</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 32px;">No leave applications found.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

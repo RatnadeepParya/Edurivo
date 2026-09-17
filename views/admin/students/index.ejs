@@ -1,0 +1,84 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Student Information System</h1>
+    <div class="page-subtitle">Centralized student directory, enrollment records and profiles</div>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <a href="/admin/students/export" class="btn btn-secondary">📥 Export CSV</a>
+    <a href="/admin/students/new" class="btn btn-primary">+ Admit New Student</a>
+  </div>
+</div>
+
+<!-- Filters & Search Toolbar -->
+<div class="card mb-6">
+  <form method="GET" action="/admin/students" class="form-row items-center">
+    <div class="form-col" style="flex: 2;">
+      <input type="text" name="q" class="form-control" placeholder="Search by student name, admission #, phone..." value="<%= searchQuery %>">
+    </div>
+    <div class="form-col">
+      <select name="classId" class="form-control" onchange="this.form.submit()">
+        <option value="">All Classes</option>
+        <% classes.forEach(cls => { %>
+          <option value="<%= cls.id %>" <%= selectedClass === cls.id ? 'selected' : '' %>><%= cls.name %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button type="submit" class="btn btn-secondary">Filter</button>
+      <a href="/admin/students" class="btn btn-secondary">Reset</a>
+    </div>
+  </form>
+</div>
+
+<!-- Students Data Table -->
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Admission #</th>
+          <th>Student Name</th>
+          <th>Class & Section</th>
+          <th>Roll No</th>
+          <th>Date of Birth</th>
+          <th>Gender</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (students && students.length > 0) { %>
+          <% students.forEach(st => { %>
+            <tr>
+              <td><strong><%= st.admissionNumber %></strong></td>
+              <td>
+                <strong><%= st.firstName %> <%= st.lastName %></strong>
+                <% if (st.email) { %><div style="font-size: 11px; color: var(--text-muted);"><%= st.email %></div><% } %>
+              </td>
+              <td><%= st.className || 'Class 10' %> - <%= st.sectionName || 'A' %></td>
+              <td><%= st.rollNumber || '-' %></td>
+              <td><%= st.dateOfBirth %></td>
+              <td><%= st.gender %></td>
+              <td><span class="badge badge-success"><%= st.status || 'ACTIVE' %></span></td>
+              <td style="text-align: right; display: flex; gap: 4px; justify-content: flex-end;">
+                <a href="/admin/students/<%= st.id %>/idcard" target="_blank" class="btn btn-secondary btn-sm" title="Print Student ID Card">🪪 ID</a>
+                <a href="/admin/students/<%= st.id %>" class="btn btn-secondary btn-sm">Profile</a>
+                <a href="/cashier/collect?studentIdClock=<%= st.id %>&studentId=<%= st.id %>" class="btn btn-primary btn-sm">Fee</a>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 32px; color: var(--text-muted);">
+              No students found matching the selected query.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

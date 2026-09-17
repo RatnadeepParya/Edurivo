@@ -1,0 +1,47 @@
+/* ==========================================================================
+   Edurivo Print Stylesheet — Optimized for Paper & PDF Outputs
+   ========================================================================== */
+
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11pt;
+  }
+
+  .sidebar,
+  .topbar,
+  .btn,
+  .no-print,
+  .toast-container,
+  .modal-overlay {
+    display: none !important;
+  }
+
+  .app-wrapper {
+    display: block !important;
+  }
+
+  .main-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .content-area {
+    padding: 0 !important;
+  }
+
+  .card, .receipt-paper {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .table th, .table td {
+    border-color: #ccc !important;
+  }
+
+  @page {
+    margin: 15mm;
+  }
+}

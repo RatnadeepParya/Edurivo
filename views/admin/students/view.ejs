@@ -1,0 +1,141 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title"><%= student.firstName %> <%= student.lastName %></h1>
+    <div class="page-subtitle">Admission No: <strong><%= student.admissionNumber %></strong> | <%= student.className || 'Class' %> - <%= student.sectionName || 'Section' %></div>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <a href="/admin/students/<%= student.id %>/idcard" target="_blank" class="btn btn-secondary">🪪 Print ID Card</a>
+    <a href="/cashier/collect?studentId=<%= student.id %>" class="btn btn-success">Collect Fee</a>
+    <a href="/admin/students" class="btn btn-secondary">← Back</a>
+  </div>
+</div>
+
+<!-- Overview Stats -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon success">📅</div>
+    <div>
+      <div class="stat-value"><%= attendance.percentage %>%</div>
+      <div class="stat-label">Attendance Rate (<%= attendance.present %> / <%= attendance.totalDays %> Days)</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon warning">💳</div>
+    <div>
+      <div class="stat-value">$<%= fees.summary.totalBalance.toFixed(2) %></div>
+      <div class="stat-label">Outstanding Fee Balance</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon primary">🏆</div>
+    <div>
+      <div class="stat-value"><%= results.length > 0 ? results[0].overallGrade : 'N/A' %></div>
+      <div class="stat-label">Latest Exam Grade</div>
+    </div>
+  </div>
+</div>
+
+<div class="flex gap-6 mt-6" style="flex-wrap: wrap;">
+  <!-- Details & Guardian -->
+  <div style="flex: 1; min-width: 320px;">
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2 class="card-title">Student Profile & Contact</h2>
+      </div>
+      <table class="table">
+        <tbody>
+          <tr><td><strong>Date of Birth</strong></td><td><%= student.dateOfBirth %></td></tr>
+          <tr><td><strong>Gender</strong></td><td><%= student.gender %></td></tr>
+          <tr><td><strong>Blood Group</strong></td><td><%= student.bloodGroup || 'N/A' %></td></tr>
+          <tr><td><strong>Portal Email</strong></td><td><%= student.email || 'N/A' %></td></tr>
+          <tr><td><strong>Phone</strong></td><td><%= student.phone || 'N/A' %></td></tr>
+          <tr><td><strong>Address</strong></td><td><%= student.address || 'N/A' %></td></tr>
+          <tr><td><strong>Guardian Name</strong></td><td><%= student.parentName || 'N/A' %></td></tr>
+          <tr><td><strong>Guardian Phone</strong></td><td><%= student.parentPhone || 'N/A' %></td></tr>
+          <tr><td><strong>Emergency Contact</strong></td><td><%= student.emergencyContact || 'N/A' %></td></tr>
+          <tr><td><strong>Medical Notes</strong></td><td><%= student.medicalNotes || 'None recorded' %></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Financial Dues & Exam Results -->
+  <div style="flex: 2; min-width: 360px;">
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2 class="card-title">💳 Fee Obligations</h2>
+        <a href="/cashier/collect?studentId=<%= student.id %>" class="btn btn-primary btn-sm">Make Payment</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fee Title</th>
+              <th>Due Date</th>
+              <th>Total Amount</th>
+              <th>Paid</th>
+              <th>Balance</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (fees.fees && fees.fees.length > 0) { %>
+              <% fees.fees.forEach(f => { %>
+                <tr>
+                  <td><strong><%= f.title %></strong></td>
+                  <td><%= f.dueDate %></td>
+                  <td>$<%= Number(f.totalAmount).toFixed(2) %></td>
+                  <td>$<%= Number(f.paidAmount || 0).toFixed(2) %></td>
+                  <td><strong style="color: <%= f.balance > 0 ? 'var(--danger)' : 'var(--success)' %>;">$<%= Number(f.balance).toFixed(2) %></strong></td>
+                  <td><span class="badge <%= f.status === 'PAID' ? 'badge-success' : 'badge-warning' %>"><%= f.status %></span></td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No fee records assigned.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">🏆 Published Examination Results</h2>
+      </div>
+      <% if (results && results.length > 0) { %>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Exam ID</th>
+                <th>Total Marks</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% results.forEach(res => { %>
+                <tr>
+                  <td><strong><%= res.examId %></strong></td>
+                  <td><%= res.totalObtained %> / <%= res.totalMax %></td>
+                  <td><%= res.percentage %>%</td>
+                  <td><span class="badge badge-info"><%= res.overallGrade %></span></td>
+                  <td><span class="badge <%= res.status === 'PASS' ? 'badge-success' : 'badge-danger' %>"><%= res.status %></span></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <p style="color: var(--text-muted); font-size: 13px;">No published examination results available yet.</p>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

@@ -1,0 +1,30 @@
+name: 🛡️ Security Vulnerability Advisory
+description: Report a security issue or vulnerability privately
+labels: ["security"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Note**: If this is a critical zero-day or exploits production data, please also review [SECURITY.md](../../SECURITY.md) for direct maintainer contact.
+
+  - type: textarea
+    id: vulnerability-desc
+    attributes:
+      label: Vulnerability Description
+      description: What type of vulnerability is this (e.g. CSRF, IDOR, Privilege Escalation, SQLi/NoSQL Injection)?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Proof of Concept / Reproduction Steps
+      description: Please share steps, curl commands, or script snippets to reproduce.
+    validations:
+      required: true
+
+  - type: textarea
+    id: remediation
+    attributes:
+      label: Proposed Mitigation / Fix
+      description: If you know how to patch this, let us know here.

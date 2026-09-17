@@ -1,0 +1,75 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Personal Attendance History</h1>
+    <div class="page-subtitle">Detailed log of daily academic attendance and presence metrics</div>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon success">📅</div>
+    <div>
+      <div class="stat-value"><%= summary.percentage %>%</div>
+      <div class="stat-label">Attendance Percentage</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon primary">✓</div>
+    <div>
+      <div class="stat-value"><%= summary.present %></div>
+      <div class="stat-label">Days Present</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon danger">✕</div>
+    <div>
+      <div class="stat-value"><%= summary.absent %></div>
+      <div class="stat-label">Days Absent</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon warning">⏳</div>
+    <div>
+      <div class="stat-value"><%= summary.late %></div>
+      <div class="stat-label">Days Late</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">Attendance Entries</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (summary.recentRecords && summary.recentRecords.length > 0) { %>
+          <% summary.recentRecords.forEach(r => { %>
+            <tr>
+              <td><strong><%= r.date %></strong></td>
+              <td>
+                <span class="badge <%= r.status === 'PRESENT' ? 'badge-success' : (r.status === 'ABSENT' ? 'badge-danger' : 'badge-warning') %>">
+                  <%= r.status %>
+                </span>
+              </td>
+              <td style="color: var(--text-muted);"><%= r.remarks || '-' %></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 32px;">No attendance records found yet.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

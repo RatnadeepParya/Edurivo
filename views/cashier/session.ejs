@@ -1,0 +1,92 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Cash Drawer Session & Reconciliation</h1>
+    <div class="page-subtitle">Shift management, opening floats, physical cash counting and discrepancy reconciliation</div>
+  </div>
+</div>
+
+<% if (activeSession) { %>
+  <div class="flex gap-6" style="flex-wrap: wrap;">
+    <!-- Active Drawer Metrics -->
+    <div style="flex: 1; min-width: 300px;">
+      <div class="card mb-6">
+        <div class="card-header">
+          <h2 class="card-title">Current Active Drawer Shift</h2>
+          <span class="badge badge-success">OPEN</span>
+        </div>
+        <table class="table">
+          <tbody>
+            <tr><td><strong>Session ID</strong></td><td><code><%= activeSession.id %></code></td></tr>
+            <tr><td><strong>Opened At</strong></td><td><%= new Date(activeSession.openedAt).toLocaleTimeString() %></td></tr>
+            <tr><td><strong>Opening Float</strong></td><td>$<%= Number(activeSession.openingFloat).toFixed(2) %></td></tr>
+            <tr><td><strong>Cash Collected</strong></td><td>$<%= Number(activeSession.totalCash || 0).toFixed(2) %></td></tr>
+            <tr><td><strong>Digital (UPI/Card/Bank)</strong></td><td>$<%= Number((activeSession.totalCollected || 0) - (activeSession.totalCash || 0)).toFixed(2) %></td></tr>
+            <tr><td><strong>Total Collected</strong></td><td><strong>$<%= Number(activeSession.totalCollected || 0).toFixed(2) %></strong></td></tr>
+            <tr style="background: #f1f5f9;">
+              <td><strong>Expected Drawer Cash</strong></td>
+              <td><strong style="color: var(--primary); font-size: 16px;">$<%= Number(activeSession.expectedCash || 0).toFixed(2) %></strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Close Drawer Form -->
+    <div style="flex: 1; min-width: 320px;">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Close Shift & Reconcile Cash</h2>
+        </div>
+        <form action="/cashier/session/close" method="POST" onsubmit="return confirm('Are you sure you want to close this cash session? This action will freeze today\'s drawer ledger.')">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="sessionId" value="<%= activeSession.id %>">
+
+          <div class="form-group">
+            <label class="form-label" for="countedCash">Physical Counted Cash in Drawer ($) *</label>
+            <input type="number" id="countedCash" name="countedCash" class="form-control" required step="0.01" placeholder="Enter physical cash amount counted">
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+              System expects exactly $<%= Number(activeSession.expectedCash || 0).toFixed(2) %> (Opening Float + Cash Collections).
+            </div>
+          </div>
+
+          <div class="form-group mt-4">
+            <label class="form-label" for="closingNotes">Reconciliation Notes</label>
+            <textarea id="closingNotes" name="closingNotes" class="form-control" rows="3" placeholder="Explain any cash discrepancy, denomination notes or drawer handoff details..."></textarea>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <button type="submit" class="btn btn-danger btn-lg" style="width: 100%;">Close Shift & Submit Reconciliation</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <div class="card" style="max-width: 500px; margin: 0 auto;">
+    <div class="card-header">
+      <h2 class="card-title">Open New Cash Drawer Shift</h2>
+    </div>
+    <form action="/cashier/session/open" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group">
+        <label class="form-label" for="openingFloat">Opening Cash Float ($) *</label>
+        <input type="number" id="openingFloat" name="openingFloat" class="form-control" value="100.00" step="0.01" required>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Initial petty cash provided in the drawer at start of shift.</div>
+      </div>
+
+      <div class="form-group mt-4">
+        <label class="form-label" for="openNotes">Shift Notes</label>
+        <input type="text" id="openNotes" name="notes" class="form-control" placeholder="Morning Shift Desk A">
+      </div>
+
+      <div style="margin-top: 24px;">
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Start Cashier Shift</button>
+      </div>
+    </form>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>

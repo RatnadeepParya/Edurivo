@@ -1,0 +1,48 @@
+<%- include('../../partials/header') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Immutable Audit & Security Trail</h1>
+    <div class="page-subtitle">Cryptographically tracked compliance log of administrative and financial transactions</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Action</th>
+          <th>Module</th>
+          <th>User</th>
+          <th>Entity ID</th>
+          <th>IP Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (logs && logs.length > 0) { %>
+          <% logs.forEach(log => { %>
+            <tr>
+              <td style="font-size: 11px; color: var(--text-muted);">
+                <%= new Date(log.timestamp).toLocaleString() %>
+              </td>
+              <td><span class="badge badge-neutral"><%= log.action %></span></td>
+              <td><strong><%= log.module %></strong></td>
+              <td>
+                <div><%= log.userId %></div>
+                <div style="font-size: 10px; color: var(--text-muted);"><%= log.role %></div>
+              </td>
+              <td><code><%= log.entityId || '-' %></code></td>
+              <td style="font-size: 12px;"><%= log.ipAddress || '127.0.0.1' %></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 32px;">No audit events recorded yet.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

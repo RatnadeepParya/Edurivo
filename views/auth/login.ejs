@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | Edurivo School Management</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 20px;
+    }
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    .login-brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .login-brand h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+    }
+    .login-brand p {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+    .quick-roles {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+      text-align: center;
+    }
+    .quick-roles p {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 10px;
+      letter-spacing: 0.05em;
+    }
+    .role-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .role-badge-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .role-badge-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-brand">
+      <div style="font-size: 40px; margin-bottom: 8px;">🎓</div>
+      <h1>Edurivo Portal</h1>
+      <p>Institutional Access & Unified Operations</p>
+    </div>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-danger" style="margin-bottom: 20px;">
+        <span>⚠</span>
+        <span><%= error %></span>
+      </div>
+    <% } %>
+
+    <form action="/auth/login" method="POST" id="loginForm">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="redirect" value="<%= typeof redirect !== 'undefined' ? redirect : '' %>">
+
+      <div class="form-group">
+        <label class="form-label" for="email">Institutional Email</label>
+        <input type="email" id="email" name="email" class="form-control" placeholder="name@edurivo.edu" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label class="form-label" for="password" style="margin-bottom: 0;">Password</label>
+          <a href="/auth/forgot-password" style="font-size: 12px;">Forgot?</a>
+        </div>
+        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 12px;">
+        Sign In to Portal
+      </button>
+    </form>
+
+    <div class="quick-roles">
+      <p>Quick Demo Credentials</p>
+      <div class="role-badges">
+        <button type="button" class="role-badge-btn" onclick="fillCreds('admin@edurivo.edu', 'Admin@123')">Admin</button>
+        <button type="button" class="role-badge-btn" onclick="fillCreds('teacher@edurivo.edu', 'Password@123')">Teacher</button>
+        <button type="button" class="role-badge-btn" onclick="fillCreds('cashier@edurivo.edu', 'Password@123')">Cashier</button>
+        <button type="button" class="role-badge-btn" onclick="fillCreds('student@edurivo.edu', 'Password@123')">Student</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function fillCreds(email, pass) {
+      document.getElementById('email').value = email;
+      document.getElementById('password').value = pass;
+    }
+  </script>
+</body>
+</html>
